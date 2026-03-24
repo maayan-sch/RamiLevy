@@ -12,7 +12,7 @@
 </div>
 
 ## First Screen
-![First Screen](screenshots/firsterdplus1.png)
+![First Screen](screenshots/firsterdplus.png)
 
 ## Second Screen
 ![Second Screen](screenshots/firstSiteAi.png)
