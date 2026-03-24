@@ -16,3 +16,5 @@
 
 ## Second Screen
 ![Second Screen](screenshots/firstSiteAi.png)
+
+[לחצו כאן לצפייה בעיצובי המסכים ב-Google AI Studio](https://ai.studio/apps/c41f5714-9418-42d2-864a-55b818c0d1db)
