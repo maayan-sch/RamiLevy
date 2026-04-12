@@ -1,0 +1,110 @@
+CREATE TABLE CUSTOMER (
+  customerID INT PRIMARY KEY,
+  CustomerName VARCHAR(100) NOT NULL,
+  email VARCHAR(100),
+  phone VARCHAR(20) NOT NULL,
+  city VARCHAR(50) NOT NULL,
+  street VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE CATEGORY (
+  CategoryID INT PRIMARY KEY,
+  CategoryName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE STORE (
+  storeID INT PRIMARY KEY,
+  StoreName VARCHAR(100) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  websiteUrl VARCHAR(255),
+  Rating NUMERIC(2,1)
+);
+
+CREATE TABLE SUPPLIER (
+  SupplierID INT PRIMARY KEY,
+  SupplierName VARCHAR(100) NOT NULL,
+  Email VARCHAR(100),
+  Phone VARCHAR(20) NOT NULL,
+  city VARCHAR(50) NOT NULL,
+  street VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE PRODUCT (
+  productID INT PRIMARY KEY,
+  ProductName VARCHAR(100) NOT NULL,
+  price NUMERIC(10,2) NOT NULL,
+  DateOfManufacture DATE NOT NULL,
+  expirationDate DATE NOT NULL,
+  kashrut VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE ORDERS (
+  orderID INT PRIMARY KEY,
+  orderDate DATE NOT NULL,
+  totalAmount NUMERIC(10,2) NOT NULL,
+  OrderStatus VARCHAR(50) NOT NULL,
+  PaymentMethod VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE ORDERITEM (
+  OrderItemID INT PRIMARY KEY,
+  Quantity INT NOT NULL,
+  SubTotal NUMERIC(10,2) NOT NULL,
+  InOnSale BOOLEAN NOT NULL,
+  saleDescription VARCHAR(255)
+);
+
+CREATE TABLE INVENTORY (
+  productID INT PRIMARY KEY,
+  Quantity INT NOT NULL,
+  MinimumStock INT NOT NULL,
+  FOREIGN KEY (productID) REFERENCES PRODUCT(productID)
+);
+
+CREATE TABLE Supplies (
+  SupplierID INT,
+  productID INT,
+  PRIMARY KEY (SupplierID, productID),
+  FOREIGN KEY (SupplierID) REFERENCES SUPPLIER(SupplierID),
+  FOREIGN KEY (productID) REFERENCES PRODUCT(productID)
+);
+
+CREATE TABLE Belongs_to (
+  productID INT,
+  CategoryID INT,
+  PRIMARY KEY (productID, CategoryID),
+  FOREIGN KEY (productID) REFERENCES PRODUCT(productID),
+  FOREIGN KEY (CategoryID) REFERENCES CATEGORY(CategoryID)
+);
+
+CREATE TABLE Included_in (
+  productID INT,
+  OrderItemID INT,
+  PRIMARY KEY (productID, OrderItemID),
+  FOREIGN KEY (productID) REFERENCES PRODUCT(productID),
+  FOREIGN KEY (OrderItemID) REFERENCES ORDERITEM(OrderItemID)
+);
+
+CREATE TABLE Contains (
+  orderID INT,
+  OrderItemID INT,
+  PRIMARY KEY (orderID, OrderItemID),
+  FOREIGN KEY (orderID) REFERENCES ORDERS(orderID),
+  FOREIGN KEY (OrderItemID) REFERENCES ORDERITEM(OrderItemID)
+);
+
+CREATE TABLE orders_customer (
+  customerID INT,
+  orderID INT,
+  PRIMARY KEY (customerID, orderID),
+  FOREIGN KEY (customerID) REFERENCES CUSTOMER(customerID),
+  FOREIGN KEY (orderID) REFERENCES ORDERS(orderID)
+);
+
+CREATE TABLE Located_in (
+  storeID INT,
+  productID INT,
+  PRIMARY KEY (storeID, productID),
+  FOREIGN KEY (storeID) REFERENCES STORE(storeID),
+  FOREIGN KEY (productID) REFERENCES INVENTORY(productID)
+);
