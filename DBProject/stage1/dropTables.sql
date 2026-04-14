@@ -1,9 +1,3 @@
-DROP TABLE IF EXISTS located_in;
-DROP TABLE IF EXISTS orders_customer;
-DROP TABLE IF EXISTS contains;
-DROP TABLE IF EXISTS included_in;
-DROP TABLE IF EXISTS belongs_to;
-DROP TABLE IF EXISTS supplies;
 DROP TABLE IF EXISTS inventory;
 DROP TABLE IF EXISTS orderitem;
 DROP TABLE IF EXISTS orders;

@@ -1,9 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\init-db",
-    "\\screenshots"
+    "\\DBProject",
+    "\\DBProject\\stage1",
+    "\\DBProject\\stage1\\DataImportFiles",
+    "\\DBProject\\stage1\\screenshots"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\DBProject\\stage1\\screenshots\\firstSiteAi.png",
   "PreviewInSolutionExplorer": false
 }

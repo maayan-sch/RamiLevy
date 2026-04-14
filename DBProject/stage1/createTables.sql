@@ -1,110 +1,75 @@
-CREATE TABLE CUSTOMER (
-  customerID INT PRIMARY KEY,
-  CustomerName VARCHAR(100) NOT NULL,
+CREATE TABLE customer (
+  customerid INT PRIMARY KEY,
+  customername VARCHAR(100) NOT NULL,
   email VARCHAR(100),
   phone VARCHAR(20) NOT NULL,
   city VARCHAR(50) NOT NULL,
   street VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE CATEGORY (
-  CategoryID INT PRIMARY KEY,
-  CategoryName VARCHAR(100) NOT NULL
+CREATE TABLE category (
+  categoryid INT PRIMARY KEY,
+  categoryname VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE STORE (
-  storeID INT PRIMARY KEY,
-  StoreName VARCHAR(100) NOT NULL,
+CREATE TABLE store (
+  storeid INT PRIMARY KEY,
+  storename VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
-  websiteUrl VARCHAR(255),
-  Rating NUMERIC(2,1)
+  websiteurl VARCHAR(255),
+  rating NUMERIC(2,1)
 );
 
-CREATE TABLE SUPPLIER (
-  SupplierID INT PRIMARY KEY,
-  SupplierName VARCHAR(100) NOT NULL,
-  Email VARCHAR(100),
-  Phone VARCHAR(20) NOT NULL,
+CREATE TABLE supplier (
+  supplierid INT PRIMARY KEY,
+  suppliername VARCHAR(100) NOT NULL,
+  email VARCHAR(100),
+  phone VARCHAR(20) NOT NULL,
   city VARCHAR(50) NOT NULL,
   street VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE PRODUCT (
-  productID INT PRIMARY KEY,
-  ProductName VARCHAR(100) NOT NULL,
+CREATE TABLE product (
+  productid INT PRIMARY KEY,
+  productname VARCHAR(100) NOT NULL,
   price NUMERIC(10,2) NOT NULL,
-  DateOfManufacture DATE NOT NULL,
-  expirationDate DATE NOT NULL,
-  kashrut VARCHAR(50) NOT NULL
+  dateofmanufacture DATE NOT NULL,
+  expirationdate DATE NOT NULL,
+  kashrut VARCHAR(50) NOT NULL,
+  categoryid INT NOT NULL,
+  supplierid INT NOT NULL,
+  FOREIGN KEY (categoryid) REFERENCES category(categoryid),
+  FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
 );
 
-CREATE TABLE ORDERS (
-  orderID INT PRIMARY KEY,
-  orderDate DATE NOT NULL,
-  totalAmount NUMERIC(10,2) NOT NULL,
-  OrderStatus VARCHAR(50) NOT NULL,
-  PaymentMethod VARCHAR(50) NOT NULL
+CREATE TABLE orders (
+  orderid INT PRIMARY KEY,
+  orderdate DATE NOT NULL,
+  totalamount NUMERIC(10,2) NOT NULL,
+  orderstatus VARCHAR(50) NOT NULL,
+  paymentmethod VARCHAR(50) NOT NULL,
+  customerid INT NOT NULL,
+  FOREIGN KEY (customerid) REFERENCES customer(customerid)
 );
 
-CREATE TABLE ORDERITEM (
-  OrderItemID INT PRIMARY KEY,
-  Quantity INT NOT NULL,
-  SubTotal NUMERIC(10,2) NOT NULL,
-  InOnSale BOOLEAN NOT NULL,
-  saleDescription VARCHAR(255)
+CREATE TABLE orderitem (
+  orderitemid INT NOT NULL,
+  orderid INT NOT NULL,
+  productid INT NOT NULL,
+  quantity INT NOT NULL,
+  subtotal NUMERIC(10,2) NOT NULL,
+  inonsale BOOLEAN NOT NULL,
+  saledescription VARCHAR(255),
+  PRIMARY KEY (orderid,orderitemid),
+  FOREIGN KEY (orderid) REFERENCES orders(orderid),
+  FOREIGN KEY (productid) REFERENCES product(productid)
 );
 
-CREATE TABLE INVENTORY (
-  productID INT PRIMARY KEY,
-  Quantity INT NOT NULL,
-  MinimumStock INT NOT NULL,
-  FOREIGN KEY (productID) REFERENCES PRODUCT(productID)
-);
-
-CREATE TABLE Supplies (
-  SupplierID INT,
-  productID INT,
-  PRIMARY KEY (SupplierID, productID),
-  FOREIGN KEY (SupplierID) REFERENCES SUPPLIER(SupplierID),
-  FOREIGN KEY (productID) REFERENCES PRODUCT(productID)
-);
-
-CREATE TABLE Belongs_to (
-  productID INT,
-  CategoryID INT,
-  PRIMARY KEY (productID, CategoryID),
-  FOREIGN KEY (productID) REFERENCES PRODUCT(productID),
-  FOREIGN KEY (CategoryID) REFERENCES CATEGORY(CategoryID)
-);
-
-CREATE TABLE Included_in (
-  productID INT,
-  OrderItemID INT,
-  PRIMARY KEY (productID, OrderItemID),
-  FOREIGN KEY (productID) REFERENCES PRODUCT(productID),
-  FOREIGN KEY (OrderItemID) REFERENCES ORDERITEM(OrderItemID)
-);
-
-CREATE TABLE Contains (
-  orderID INT,
-  OrderItemID INT,
-  PRIMARY KEY (orderID, OrderItemID),
-  FOREIGN KEY (orderID) REFERENCES ORDERS(orderID),
-  FOREIGN KEY (OrderItemID) REFERENCES ORDERITEM(OrderItemID)
-);
-
-CREATE TABLE orders_customer (
-  customerID INT,
-  orderID INT,
-  PRIMARY KEY (customerID, orderID),
-  FOREIGN KEY (customerID) REFERENCES CUSTOMER(customerID),
-  FOREIGN KEY (orderID) REFERENCES ORDERS(orderID)
-);
-
-CREATE TABLE Located_in (
-  storeID INT,
-  productID INT,
-  PRIMARY KEY (storeID, productID),
-  FOREIGN KEY (storeID) REFERENCES STORE(storeID),
-  FOREIGN KEY (productID) REFERENCES INVENTORY(productID)
+CREATE TABLE inventory (
+  productid INT PRIMARY KEY,
+  storeid INT NOT NULL,
+  quantity INT NOT NULL,
+  minimumstock INT NOT NULL,
+  FOREIGN KEY (productid) REFERENCES product(productid),
+  FOREIGN KEY (storeid) REFERENCES store(storeid)
 );
