@@ -4,8 +4,11 @@
     "\\DBProject",
     "\\DBProject\\stage1",
     "\\DBProject\\stage1\\DataImportFiles",
-    "\\DBProject\\stage1\\screenshots"
+    "\\DBProject\\stage1\\manualInsert",
+    "\\DBProject\\stage1\\Programing",
+    "\\DBProject\\stage1\\screenshots",
+    "\\init-db"
   ],
-  "SelectedNode": "\\DBProject\\stage1\\screenshots\\firstSiteAi.png",
+  "SelectedNode": "\\DBProject\\stage1\\backup_2026_04_14.sql",
   "PreviewInSolutionExplorer": false
 }
