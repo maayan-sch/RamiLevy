@@ -3,20 +3,17 @@ SELECT
     c.customerid,
     c.customername,
     c.email,
-    o.orderid,
-    o.orderdate,
     o.totalamount
 FROM customer c
 JOIN orders o ON c.customerid = o.customerid
 WHERE o.totalamount > 200
-ORDER BY o.totalamount DESC;
+ORDER BY c.customername;
 
 -- Query 1B: Customers with orders above 200 (using subquery)
 SELECT 
     c.customerid,
     c.customername,
-    c.email,
-    c.phone
+    c.email
 FROM customer c
 WHERE c.customerid IN (
     SELECT o.customerid
