@@ -237,7 +237,7 @@ DBProject/stage1/DataImportFiles/products.csv
 
 ---
 
-## Conclusion
+## Conclusion of stage 1
 
 This project demonstrates:
 
@@ -247,3 +247,287 @@ This project demonstrates:
 - Backup and restore processes  
 
 The system is structured and simulates a real-world supermarket database.
+
+# Project Report – Stage 2
+
+## Stage 2: Queries, Constraints, Transactions and Indexes
+
+---
+
+## SELECT Queries (Dual Implementations)
+
+### Query 1A – Using JOIN
+
+השאילתה מחזירה לקוחות שביצעו הזמנות עם סכום גבוה מ-200 יחד עם פרטי ההזמנות שלהם.
+
+SELECT c.customerid, c.customername, c.email,
+       o.orderid, o.orderdate, o.totalamount
+FROM customer c
+JOIN orders o ON c.customerid = o.customerid
+WHERE o.totalamount > 200;
+
+![Query1A](DBProject/stage2/screenshots2/1A.png)
+
+---
+
+### Query 1B – Using Subquery
+
+השאילתה מחזירה את אותם לקוחות באמצעות תת-שאילתה המחזירה מזהי לקוחות.
+
+SELECT c.customerid, c.customername, c.email
+FROM customer c
+WHERE c.customerid IN (
+    SELECT customerid
+    FROM orders
+    WHERE totalamount > 200
+);
+
+![Query1B](DBProject/stage2/screenshots2/1B.png)
+
+Difference and Efficiency:
+JOIN מבצע חיבור ישיר בין הטבלאות ולכן מאפשר ביצועים טובים יותר. Subquery יוצרת רשימה זמנית ולכן פחות יעילה.
+
+---
+
+### Query 2A – Using JOIN
+
+השאילתה מחזירה מוצרים שמלאי שלהם נמוך מהמינימום כולל פרטי הסניף.
+
+SELECT p.productid, p.productname,
+       s.storeid, s.storename,
+       i.quantity, i.minimumstock
+FROM product p
+JOIN inventory i ON p.productid = i.productid
+JOIN store s ON i.storeid = s.storeid
+WHERE i.quantity < i.minimumstock;
+
+![Query2A](DBProject/stage2/screenshots2/2A.png)
+
+---
+
+### Query 2B – Using Subquery
+
+SELECT productid, productname
+FROM product
+WHERE productid IN (
+    SELECT productid
+    FROM inventory
+    WHERE quantity < minimumstock
+);
+
+![Query2B](DBProject/stage2/screenshots2/2B.png)
+
+Difference and Efficiency:
+JOIN מחזיר מידע רחב ממספר טבלאות ולכן מתאים יותר לשימוש. בנוסף הוא יעיל יותר מבחינת ביצועים.
+
+---
+
+### Query 3A – Using JOIN
+
+השאילתה מחזירה ספקים והמוצרים שלהם לפי קטגוריה.
+
+SELECT s.supplierid, s.suppliername,
+       p.productid, p.productname,
+       c.categoryname
+FROM supplier s
+JOIN product p ON s.supplierid = p.supplierid
+JOIN category c ON p.categoryid = c.categoryid
+WHERE c.categoryname = 'Dairy';
+
+![Query3A](DBProject/stage2/screenshots2/3A.png)
+
+---
+
+### Query 3B – Using Subquery
+
+SELECT supplierid, suppliername
+FROM supplier
+WHERE supplierid IN (
+    SELECT supplierid
+    FROM product
+    WHERE categoryid = (
+        SELECT categoryid FROM category WHERE categoryname = 'Dairy'
+    )
+);
+
+![Query3B](DBProject/stage2/screenshots2/3B.png)
+
+Difference and Efficiency:
+JOIN יעיל יותר כי הוא מבצע חיבור ישיר בין כל הטבלאות. Subquery מקוננת מבצעת מספר שלבים ולכן פחות יעילה.
+
+---
+
+### Query 4A – Using EXTRACT
+
+השאילתה מחזירה הזמנות לפי חודש ושנה.
+
+SELECT *
+FROM orders
+WHERE EXTRACT(MONTH FROM orderdate) = 1
+  AND EXTRACT(YEAR FROM orderdate) = 2025;
+
+![Query4A](DBProject/stage2/screenshots2/4A.png)
+
+---
+
+### Query 4B – Using BETWEEN
+
+SELECT *
+FROM orders
+WHERE orderdate BETWEEN '2025-01-01' AND '2025-01-31';
+
+![Query4B](DBProject/stage2/screenshots2/4B.png)
+
+Difference and Efficiency:
+BETWEEN מאפשר שימוש באינדקס ולכן יעיל יותר, בעוד EXTRACT פחות יעיל.
+
+---
+
+## Additional SELECT Queries
+
+### Query 5
+
+השאילתה מחזירה מידע סטטיסטי על הזמנות באמצעות פונקציות חישוב.
+
+SELECT ...
+
+![Query5](DBProject/stage2/screenshots2/5.png)
+
+---
+
+### Query 6
+
+השאילתה מציגה מוצרים שנמכרו הכי הרבה יחד עם סכום ההכנסות.
+
+SELECT ...
+
+![Query6](DBProject/stage2/screenshots2/6.png)
+
+---
+
+### Query 7
+
+השאילתה מחזירה מוצרים שפג תוקפם או עומדים לפוג בקרוב.
+
+SELECT ...
+
+![Query7](DBProject/stage2/screenshots2/7.png)
+
+---
+
+### Query 8
+
+השאילתה מסכמת את מצב המלאי לפי חנויות.
+
+SELECT ...
+
+![Query8](DBProject/stage2/screenshots2/8.png)
+
+---
+
+## DELETE Queries
+
+השאילתות מבצעות מחיקה של נתונים לפי תנאים שונים.
+
+### Delete 1
+
+השאילתה מוחקת פריטים מטבלת orderitem לפי תנאי על מזהה הזמנה.
+
+![Delete1](DBProject/stage2/screenshots2/delete1.png)
+
+---
+
+### Delete 2
+
+השאילתה מוחקת פריטים עם כמות נמוכה.
+
+![Delete2](DBProject/stage2/screenshots2/delete2.png)
+
+---
+
+### Delete 3
+
+השאילתה מוחקת פריטים לפי תנאי נוסף.
+
+![Delete3](DBProject/stage2/screenshots2/delete3.png)
+
+---
+
+## UPDATE Queries
+
+השאילתות מעדכנות נתונים קיימים ומדגימות שינוי בערכים.
+
+### Update 1
+
+השאילתה מעדכנת מחירים של מוצרים.
+
+![Update1](DBProject/stage2/screenshots2/update1.png)
+
+---
+
+### Update 2
+
+השאילתה מעדכנת סטטוס הזמנות.
+
+![Update2](DBProject/stage2/screenshots2/update2.png)
+
+---
+
+### Update 3
+
+השאילתה מעדכנת דירוג חנויות לפי תנאים.
+
+![Update3](DBProject/stage2/screenshots2/update3.png)
+
+---
+
+## Constraints
+
+נוספו אילוצים לשמירה על תקינות הנתונים:
+- מחיר מוצר חייב להיות חיובי
+- כמות אינה יכולה להיות שלילית
+- דירוג חנות בין 1 ל-5
+
+ניסיונות להכניס נתונים לא תקינים גרמו לשגיאות, מה שמוכיח שהאילוצים נאכפים.
+
+![Constraints](DBProject/stage2/screenshots2/constr.png)
+
+---
+
+## ROLLBACK
+
+בוצע עדכון זמני ולאחר מכן בוטל באמצעות ROLLBACK. ניתן לראות שהנתונים חזרו למצבם המקורי.
+
+![Rollback1](DBProject/stage2/screenshots2/rollback1.png)
+![Rollback2](DBProject/stage2/screenshots2/rollback2.png)
+
+---
+
+## COMMIT
+
+בוצע עדכון ולאחר מכן COMMIT ששמר את השינוי לצמיתות.
+
+![Commit1](DBProject/stage2/screenshots2/commit1.png)
+![Commit2](DBProject/stage2/screenshots2/commit2.png)
+
+---
+
+## Indexes
+
+נבדקו זמני ריצה לפני ואחרי יצירת אינדקסים.
+
+![Index1](DBProject/stage2/screenshots2/index1.png)
+![Index2](DBProject/stage2/screenshots2/index2.png)
+![Index3](DBProject/stage2/screenshots2/index3.png)
+
+Explanation:
+לפני יצירת אינדקס בוצעה סריקה מלאה של הטבלה (Seq Scan).
+לאחר יצירת האינדקס נעשה שימוש ב-Index Scan או Bitmap Index Scan.
+זמן הריצה ירד משמעותית, ולכן האינדקסים שיפרו את ביצועי השאילתות.
+
+---
+
+## Summary
+
+בשלב זה יושמו שאילתות מורכבות, פעולות עדכון ומחיקה, אילוצים, טרנזקציות ואינדקסים.
+המערכת מדגימה שמירה על תקינות הנתונים ושיפור ביצועים באמצעות אופטימיזציה.
