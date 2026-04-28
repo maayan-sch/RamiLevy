@@ -5,22 +5,25 @@ SELECT
     c.email,
     o.totalamount
 FROM customer c
-JOIN orders o ON c.customerid = o.customerid
+NATURAL JOIN orders o 
 WHERE o.totalamount > 200
-ORDER BY c.customername;
+ORDER BY o.totalamount DESC
+LIMIT 100;
+
+
 
 -- Query 1B: Customers with orders above 200 (using subquery)
 SELECT 
     c.customerid,
     c.customername,
-    c.email
-FROM customer c
-WHERE c.customerid IN (
-    SELECT o.customerid
-    FROM orders o
-    WHERE o.totalamount > 200
-)
-ORDER BY c.customername;
+    c.email,
+    o.totalamount
+FROM customer c,
+     orders o
+WHERE c.customerid = o.customerid
+AND o.totalamount > 200
+ORDER BY o.totalamount DESC
+LIMIT 100;
 
 -- Query 2A: Products with quantity below minimum stock (using JOIN)
 SELECT
