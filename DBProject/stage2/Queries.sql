@@ -10,8 +10,6 @@ WHERE o.totalamount > 200
 ORDER BY o.totalamount DESC
 LIMIT 100;
 
-
-
 -- Query 1B: Customers with orders above 200 (using subquery)
 SELECT 
     c.customerid,
@@ -29,6 +27,18 @@ LIMIT 100;
 SELECT
     p.productid,
     p.productname,
+    s.suppliername,
+    EXTRACT(YEAR FROM p.expirationdate) AS exp_year,
+    EXTRACT(MONTH FROM p.expirationdate) AS exp_month,
+    p.price
+FROM product p
+JOIN supplier s ON p.supplierid = s.supplierid
+WHERE p.price > 50
+ORDER BY exp_year, exp_month;
+
+/*SELECT
+    p.productid,
+    p.productname,
     s.storeid,
     s.storename,
     i.quantity,
@@ -37,10 +47,26 @@ FROM product p
 JOIN inventory i ON p.productid = i.productid
 JOIN store s ON i.storeid = s.storeid
 WHERE i.quantity < i.minimumstock
-ORDER BY i.quantity ASC;
+ORDER BY i.quantity ASC;*/
 
 -- Query 2B: Products with quantity below minimum stock (using EXISTS)
 SELECT
+    p.productid,
+    p.productname,
+    s.suppliername,
+    EXTRACT(YEAR FROM p.expirationdate) AS exp_year,
+    EXTRACT(MONTH FROM p.expirationdate) AS exp_month,
+    p.price
+FROM product p
+JOIN supplier s ON p.supplierid = s.supplierid
+WHERE EXISTS (
+    SELECT 1
+    FROM product p2
+    WHERE p2.productid = p.productid
+      AND p2.price > 50
+)
+ORDER BY exp_year, exp_month;
+/*SELECT
     p.productid,
     p.productname,
     p.price,
@@ -52,7 +78,7 @@ WHERE EXISTS (
     WHERE i.productid = p.productid
       AND i.quantity < i.minimumstock
 )
-ORDER BY p.productname;
+ORDER BY p.productname;*/
 
 -- Query 3A: Suppliers and their products by category (using JOIN)
 SELECT
@@ -66,7 +92,8 @@ FROM supplier s
 JOIN product p ON s.supplierid = p.supplierid
 JOIN category c ON p.categoryid = c.categoryid
 WHERE c.categoryname = 'Dairy'
-ORDER BY s.suppliername;
+ORDER BY s.suppliername
+LIMIT 100;
 
 -- Query 3B: Suppliers that provide products from a specific category (using subquery)
 SELECT
@@ -82,7 +109,8 @@ WHERE s.supplierid IN (
     JOIN category c ON p.categoryid = c.categoryid
     WHERE c.categoryname = 'Dairy'
 )
-ORDER BY s.suppliername;
+ORDER BY s.suppliername
+LIMIT 100;
 
 -- Query 4A: Orders in a specific date (using EXTRACT)
 SELECT

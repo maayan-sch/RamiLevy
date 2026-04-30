@@ -1,22 +1,27 @@
-SELECT 
+-- Query 4A: Orders in a specific date (using EXTRACT)
+SELECT
     c.customerid,
     c.customername,
-    c.email,
+    o.orderid,
+    o.orderdate,
     o.totalamount
 FROM customer c
-NATURAL JOIN orders o 
-WHERE o.totalamount > 200
-ORDER BY o.totalamount DESC
+JOIN orders o ON c.customerid = o.customerid
+WHERE EXTRACT(DAY FROM o.orderdate) = 1
+  AND EXTRACT(MONTH FROM o.orderdate) = 1
+  AND EXTRACT(YEAR FROM o.orderdate) = 2025
+ORDER BY o.orderdate
 LIMIT 100;
 
-SELECT 
+-- Query 4B: Orders in a specific month (using BETWEEN)
+SELECT
     c.customerid,
     c.customername,
-    c.email,
+    o.orderid,
+    o.orderdate,
     o.totalamount
-FROM customer c,
-     orders o
-WHERE c.customerid = o.customerid
-AND o.totalamount > 200
-ORDER BY o.totalamount DESC
+FROM customer c
+JOIN orders o ON c.customerid = o.customerid
+WHERE o.orderdate BETWEEN '2025-01-01' AND '2025-01-31'
+ORDER BY o.orderdate
 LIMIT 100;
