@@ -23,7 +23,7 @@ AND o.totalamount > 200
 ORDER BY o.totalamount DESC
 LIMIT 100;
 
--- Query 2A: Products with quantity below minimum stock (using JOIN)
+-- Query 2A: Products with price above 50 and expiration date details using JOIN
 SELECT
     p.productid,
     p.productname,
@@ -38,7 +38,7 @@ ORDER BY exp_year, exp_month;
 
 
 
--- Query 2B: Products with quantity below minimum stock (using EXISTS)
+-- Query 2B: Products with price above 50 and expiration date details using EXISTS
 SELECT
     p.productid,
     p.productname,
@@ -57,14 +57,11 @@ WHERE EXISTS (
 ORDER BY exp_year, exp_month;
 
 
--- Query 3A: Suppliers and their products by category (using JOIN)
-SELECT
+-- Query 3A: Suppliers by category using JOIN
+SELECT DISTINCT
     s.supplierid,
     s.suppliername,
-    s.phone,
-    p.productid,
-    p.productname,
-    c.categoryname
+    s.phone
 FROM supplier s
 JOIN product p ON s.supplierid = p.supplierid
 JOIN category c ON p.categoryid = c.categoryid
@@ -72,19 +69,20 @@ WHERE c.categoryname = 'Dairy'
 ORDER BY s.suppliername
 LIMIT 100;
 
--- Query 3B: Suppliers that provide products from a specific category (using subquery)
-SELECT
+-- Query 3B: Suppliers by category using subquery
+SELECT DISTINCT
     s.supplierid,
     s.suppliername,
-    s.phone,
-    s.city,
-    s.street
+    s.phone
 FROM supplier s
 WHERE s.supplierid IN (
     SELECT p.supplierid
     FROM product p
-    JOIN category c ON p.categoryid = c.categoryid
-    WHERE c.categoryname = 'Dairy'
+    WHERE p.categoryid IN (
+        SELECT c.categoryid
+        FROM category c
+        WHERE c.categoryname = 'Dairy'
+    )
 )
 ORDER BY s.suppliername
 LIMIT 100;
@@ -98,8 +96,7 @@ SELECT
     o.totalamount
 FROM customer c
 JOIN orders o ON c.customerid = o.customerid
-WHERE EXTRACT(DAY FROM o.orderdate) = 1
-  AND EXTRACT(MONTH FROM o.orderdate) = 1
+WHERE EXTRACT(MONTH FROM o.orderdate) = 1
   AND EXTRACT(YEAR FROM o.orderdate) = 2025
 ORDER BY o.orderdate;
 
