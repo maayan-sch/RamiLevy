@@ -36,18 +36,7 @@ JOIN supplier s ON p.supplierid = s.supplierid
 WHERE p.price > 50
 ORDER BY exp_year, exp_month;
 
-/*SELECT
-    p.productid,
-    p.productname,
-    s.storeid,
-    s.storename,
-    i.quantity,
-    i.minimumstock
-FROM product p
-JOIN inventory i ON p.productid = i.productid
-JOIN store s ON i.storeid = s.storeid
-WHERE i.quantity < i.minimumstock
-ORDER BY i.quantity ASC;*/
+
 
 -- Query 2B: Products with quantity below minimum stock (using EXISTS)
 SELECT
@@ -66,19 +55,7 @@ WHERE EXISTS (
       AND p2.price > 50
 )
 ORDER BY exp_year, exp_month;
-/*SELECT
-    p.productid,
-    p.productname,
-    p.price,
-    p.expirationdate
-FROM product p
-WHERE EXISTS (
-    SELECT 1
-    FROM inventory i
-    WHERE i.productid = p.productid
-      AND i.quantity < i.minimumstock
-)
-ORDER BY p.productname;*/
+
 
 -- Query 3A: Suppliers and their products by category (using JOIN)
 SELECT

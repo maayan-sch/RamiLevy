@@ -1,27 +1,32 @@
--- Query 4A: Orders in a specific date (using EXTRACT)
+-- Query 2A: Products with quantity below minimum stock (using JOIN)
 SELECT
-    c.customerid,
-    c.customername,
-    o.orderid,
-    o.orderdate,
-    o.totalamount
-FROM customer c
-JOIN orders o ON c.customerid = o.customerid
-WHERE EXTRACT(DAY FROM o.orderdate) = 1
-  AND EXTRACT(MONTH FROM o.orderdate) = 1
-  AND EXTRACT(YEAR FROM o.orderdate) = 2025
-ORDER BY o.orderdate
-LIMIT 100;
+    p.productid,
+    p.productname,
+    s.suppliername,
+    EXTRACT(YEAR FROM p.expirationdate) AS exp_year,
+    EXTRACT(MONTH FROM p.expirationdate) AS exp_month,
+    p.price
+FROM product p
+JOIN supplier s ON p.supplierid = s.supplierid
+WHERE p.price > 50
+ORDER BY exp_year, exp_month;
 
--- Query 4B: Orders in a specific month (using BETWEEN)
+
+
+-- Query 2B: Products with quantity below minimum stock (using EXISTS)
 SELECT
-    c.customerid,
-    c.customername,
-    o.orderid,
-    o.orderdate,
-    o.totalamount
-FROM customer c
-JOIN orders o ON c.customerid = o.customerid
-WHERE o.orderdate BETWEEN '2025-01-01' AND '2025-01-31'
-ORDER BY o.orderdate
-LIMIT 100;
+    p.productid,
+    p.productname,
+    s.suppliername,
+    EXTRACT(YEAR FROM p.expirationdate) AS exp_year,
+    EXTRACT(MONTH FROM p.expirationdate) AS exp_month,
+    p.price
+FROM product p
+JOIN supplier s ON p.supplierid = s.supplierid
+WHERE EXISTS (
+    SELECT 1
+    FROM product p2
+    WHERE p2.productid = p.productid
+      AND p2.price > 50
+)
+ORDER BY exp_year, exp_month;
