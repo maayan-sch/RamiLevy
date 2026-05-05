@@ -291,15 +291,8 @@ JOIN מבצע חיבור ישיר בין הטבלאות ולכן מאפשר בי
 
 ### Query 2A – Using JOIN
 
-השאילתה מחזירה מוצרים שמלאי שלהם נמוך מהמינימום כולל פרטי הסניף.
+השאילתה מחזירה מוצרים שמחירם מעל 50, כולל שם הספק ותאריך התפוגה מפורק לשנה ולחודש.
 
-SELECT p.productid, p.productname,
-       s.storeid, s.storename,
-       i.quantity, i.minimumstock
-FROM product p
-JOIN inventory i ON p.productid = i.productid
-JOIN store s ON i.storeid = s.storeid
-WHERE i.quantity < i.minimumstock;
 
 ![Query2A](DBProject/stage2/screenshots2/2A.png)
 
@@ -307,24 +300,17 @@ WHERE i.quantity < i.minimumstock;
 
 ### Query 2B – Using Subquery
 
-SELECT productid, productname
-FROM product
-WHERE productid IN (
-    SELECT productid
-    FROM inventory
-    WHERE quantity < minimumstock
-);
+השאילתה מחזירה מוצרים שמחירם מעל 50 באמצעות EXISTS.
 
 ![Query2B](DBProject/stage2/screenshots2/2B.png)
 
 Difference and Efficiency:
-JOIN מחזיר מידע רחב ממספר טבלאות ולכן מתאים יותר לשימוש. בנוסף הוא יעיל יותר מבחינת ביצועים.
-
+השימוש ב־EXISTS כאן מיותר כי הוא בודק את אותה שורה ולכן עדיף להשתמש בתנאי WHERE פשוט ויעיל יותר
 ---
 
 ### Query 3A – Using JOIN
 
-השאילתה מחזירה ספקים והמוצרים שלהם לפי קטגוריה.
+- חלבי השאילתה מחזירה ספקים והמוצרים שלהם לפי קטגוריה.
 
 SELECT s.supplierid, s.suppliername,
        p.productid, p.productname,
@@ -353,7 +339,8 @@ WHERE supplierid IN (
 ![Query3B](DBProject/stage2/screenshots2/3B.png)
 
 Difference and Efficiency:
-JOIN יעיל יותר כי הוא מבצע חיבור ישיר בין כל הטבלאות. Subquery מקוננת מבצעת מספר שלבים ולכן פחות יעילה.
+JOIN יעיל יותר כי הוא מבצע חיבור ישיר בין כל הטבלאות. 
+Subquery מקוננת מבצעת מספר שלבים ולכן פחות יעילה.
 
 ---
 
@@ -379,8 +366,8 @@ WHERE orderdate BETWEEN '2025-01-01' AND '2025-01-31';
 ![Query4B](DBProject/stage2/screenshots2/4B.png)
 
 Difference and Efficiency:
-BETWEEN מאפשר שימוש באינדקס ולכן יעיל יותר, בעוד EXTRACT פחות יעיל.
-
+BETWEEN לרוב יעיל יותר כי מאפשר שימוש באינדקס,
+בעוד EXTRACT מפעיל פונקציה ולכן עלול להיות פחות יעיל
 ---
 
 ## Additional SELECT Queries

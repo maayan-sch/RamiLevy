@@ -49,7 +49,7 @@ SELECT
 FROM product p
 JOIN supplier s ON p.supplierid = s.supplierid
 WHERE EXISTS (
-    SELECT 1
+    SELECT *
     FROM product p2
     WHERE p2.productid = p.productid
       AND p2.price > 50
@@ -63,8 +63,8 @@ SELECT DISTINCT
     s.suppliername,
     s.phone
 FROM supplier s
-JOIN product p ON s.supplierid = p.supplierid
-JOIN category c ON p.categoryid = c.categoryid
+NATURAL JOIN product p
+NATURAL JOIN category c
 WHERE c.categoryname = 'Dairy'
 ORDER BY s.suppliername
 LIMIT 100;
@@ -95,7 +95,7 @@ SELECT
     o.orderdate,
     o.totalamount
 FROM customer c
-JOIN orders o ON c.customerid = o.customerid
+NATURAL JOIN orders o 
 WHERE EXTRACT(MONTH FROM o.orderdate) = 1
   AND EXTRACT(YEAR FROM o.orderdate) = 2025
 ORDER BY o.orderdate;
@@ -132,8 +132,8 @@ SELECT
     SUM(oi.quantity) AS total_quantity_sold,
     SUM(oi.subtotal) AS total_revenue
 FROM product p
-JOIN category c ON p.categoryid = c.categoryid
-JOIN orderitem oi ON p.productid = oi.productid
+NATURAL JOIN category c 
+NATURAL JOIN orderitem oi 
 GROUP BY p.productid, p.productname, c.categoryname
 ORDER BY total_quantity_sold DESC;
 
@@ -152,12 +152,11 @@ ORDER BY p.expirationdate;
 SELECT
     s.storeid,
     s.storename,
-    s.rating,
     COUNT(i.productid) AS number_of_products,
     SUM(i.quantity) AS total_inventory_quantity
 FROM store s
-JOIN inventory i ON s.storeid = i.storeid
-GROUP BY s.storeid, s.storename, s.rating
+NATURAL JOIN inventory i 
+GROUP BY s.storeid, s.storename
 ORDER BY total_inventory_quantity DESC;
 
 -- Update 1: Show products before price update
