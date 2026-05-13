@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\DBProject",
-    "\\DBProject\\stage1\\Programing",
-    "\\DBProject\\stage2"
+    "\\DBProject\\stage3"
   ],
-  "SelectedNode": "\\DBProject\\stage2\\test.sql",
+  "SelectedNode": "\\DBProject\\stage3\\reverse.py",
   "PreviewInSolutionExplorer": false
 }
