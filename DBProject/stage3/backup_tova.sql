@@ -133,7 +133,6 @@ CREATE TABLE public.location (
     street character varying(100) NOT NULL,
     streetnumber integer NOT NULL,
     region character varying(50) NOT NULL,
-    storeid integer NOT NULL
 );
 
 
@@ -44434,14 +44433,6 @@ ALTER TABLE ONLY public.inventory
 ALTER TABLE ONLY public.inventory
     ADD CONSTRAINT inventory_storeid_fkey FOREIGN KEY (storeid) REFERENCES public.store(storeid);
 
-
---
--- TOC entry 3350 (class 2606 OID 16406)
--- Name: location location_storeid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tova
---
-
-ALTER TABLE ONLY public.location
-    ADD CONSTRAINT location_storeid_fkey FOREIGN KEY (storeid) REFERENCES public.store(storeid);
 
 
 --

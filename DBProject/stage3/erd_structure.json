@@ -1,246 +1,256 @@
 {
-    "applies_to": {
-        "columns": [
-            {
-                "name": "productid",
-                "type": "integer"
-            },
-            {
-                "name": "discountid",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "category": {
-        "columns": [
-            {
-                "name": "categoryid",
-                "type": "integer"
-            },
-            {
-                "name": "categoryname",
-                "type": "character"
-            },
-            {
-                "name": "isactive",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "discount": {
-        "columns": [
-            {
-                "name": "discountid",
-                "type": "integer"
-            },
-            {
-                "name": "discountname",
-                "type": "character"
-            },
-            {
-                "name": "discountpercentage",
-                "type": "integer"
-            },
-            {
-                "name": "startdate",
-                "type": "date"
-            },
-            {
-                "name": "enddate",
-                "type": "date"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "employee": {
-        "columns": [
-            {
-                "name": "employeeid",
-                "type": "integer"
-            },
-            {
-                "name": "firstname",
-                "type": "character"
-            },
-            {
-                "name": "lastname",
-                "type": "character"
-            },
-            {
-                "name": "status",
-                "type": "character"
-            },
-            {
-                "name": "salary",
-                "type": "numeric(10,2)"
-            },
-            {
-                "name": "role",
-                "type": "character"
-            },
-            {
-                "name": "storeid",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "inventory": {
-        "columns": [
-            {
-                "name": "storeid",
-                "type": "integer"
-            },
-            {
-                "name": "productid",
-                "type": "integer"
-            },
-            {
-                "name": "quantity",
-                "type": "integer"
-            },
-            {
-                "name": "minimumstock",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "location": {
-        "columns": [
-            {
-                "name": "locationid",
-                "type": "integer"
-            },
-            {
-                "name": "city",
-                "type": "character"
-            },
-            {
-                "name": "street",
-                "type": "character"
-            },
-            {
-                "name": "streetnumber",
-                "type": "integer"
-            },
-            {
-                "name": "region",
-                "type": "character"
-            },
-            {
-                "name": "storeid",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "product": {
-        "columns": [
-            {
-                "name": "productid",
-                "type": "integer"
-            },
-            {
-                "name": "productname",
-                "type": "character"
-            },
-            {
-                "name": "price",
-                "type": "numeric(10,2)"
-            },
-            {
-                "name": "kashrut",
-                "type": "character"
-            },
-            {
-                "name": "brand",
-                "type": "character"
-            },
-            {
-                "name": "expirationdate",
-                "type": "date"
-            },
-            {
-                "name": "categoryid",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "store": {
-        "columns": [
-            {
-                "name": "storeid",
-                "type": "integer"
-            },
-            {
-                "name": "storename",
-                "type": "character"
-            },
-            {
-                "name": "phone",
-                "type": "character"
-            },
-            {
-                "name": "storeemail",
-                "type": "character"
-            },
-            {
-                "name": "rating",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "supplier": {
-        "columns": [
-            {
-                "name": "supplierid",
-                "type": "integer"
-            },
-            {
-                "name": "suppliername",
-                "type": "character"
-            },
-            {
-                "name": "email",
-                "type": "character"
-            },
-            {
-                "name": "contactphone",
-                "type": "character"
-            },
-            {
-                "name": "address",
-                "type": "character"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    },
-    "suppliered_by": {
-        "columns": [
-            {
-                "name": "supplierid",
-                "type": "integer"
-            },
-            {
-                "name": "productid",
-                "type": "integer"
-            }
-        ],
-        "primary_keys": [],
-        "foreign_keys": []
-    }
+    "entities": [
+        {
+            "entity_name": "category",
+            "attributes": [
+                {
+                    "name": "categoryid",
+                    "type": "integer"
+                },
+                {
+                    "name": "categoryname",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "isactive",
+                    "type": "integer"
+                }
+            ],
+            "primary_keys": [
+                "categoryid"
+            ]
+        },
+        {
+            "entity_name": "discount",
+            "attributes": [
+                {
+                    "name": "discountid",
+                    "type": "integer"
+                },
+                {
+                    "name": "discountname",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "discountpercentage",
+                    "type": "integer"
+                },
+                {
+                    "name": "startdate",
+                    "type": "date"
+                },
+                {
+                    "name": "enddate",
+                    "type": "date"
+                }
+            ],
+            "primary_keys": [
+                "discountid"
+            ]
+        },
+        {
+            "entity_name": "employee",
+            "attributes": [
+                {
+                    "name": "employeeid",
+                    "type": "integer"
+                },
+                {
+                    "name": "firstname",
+                    "type": "character varying(50)"
+                },
+                {
+                    "name": "lastname",
+                    "type": "character varying(50)"
+                },
+                {
+                    "name": "status",
+                    "type": "character varying(20)"
+                },
+                {
+                    "name": "salary",
+                    "type": "numeric(10,2)"
+                },
+                {
+                    "name": "role",
+                    "type": "character varying(50)"
+                }
+            ],
+            "primary_keys": [
+                "employeeid"
+            ]
+        },
+        {
+            "entity_name": "inventory",
+            "attributes": [
+                {
+                    "name": "quantity",
+                    "type": "integer"
+                },
+                {
+                    "name": "minimumstock",
+                    "type": "integer"
+                }
+            ],
+            "primary_keys": []
+        },
+        {
+            "entity_name": "location",
+            "attributes": [
+                {
+                    "name": "locationid",
+                    "type": "integer"
+                },
+                {
+                    "name": "city",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "street",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "streetnumber",
+                    "type": "integer"
+                },
+                {
+                    "name": "region",
+                    "type": "character varying(50)"
+                }
+            ],
+            "primary_keys": [
+                "locationid"
+            ]
+        },
+        {
+            "entity_name": "product",
+            "attributes": [
+                {
+                    "name": "productid",
+                    "type": "integer"
+                },
+                {
+                    "name": "productname",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "price",
+                    "type": "numeric(10,2)"
+                },
+                {
+                    "name": "kashrut",
+                    "type": "character varying(50)"
+                },
+                {
+                    "name": "brand",
+                    "type": "character varying(50)"
+                },
+                {
+                    "name": "expirationdate",
+                    "type": "date"
+                }
+            ],
+            "primary_keys": [
+                "productid"
+            ]
+        },
+        {
+            "entity_name": "store",
+            "attributes": [
+                {
+                    "name": "storeid",
+                    "type": "integer"
+                },
+                {
+                    "name": "storename",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "phone",
+                    "type": "character varying(15)"
+                },
+                {
+                    "name": "storeemail",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "rating",
+                    "type": "integer"
+                }
+            ],
+            "primary_keys": [
+                "storeid"
+            ]
+        },
+        {
+            "entity_name": "supplier",
+            "attributes": [
+                {
+                    "name": "supplierid",
+                    "type": "integer"
+                },
+                {
+                    "name": "suppliername",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "email",
+                    "type": "character varying(100)"
+                },
+                {
+                    "name": "contactphone",
+                    "type": "character varying(15)"
+                },
+                {
+                    "name": "address",
+                    "type": "character varying(200)"
+                }
+            ],
+            "primary_keys": [
+                "supplierid"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationship_name": "applies_to",
+            "type": "many_to_many",
+            "between": [
+                "discount",
+                "product"
+            ]
+        },
+        {
+            "relationship_name": "Works in",
+            "type": "one_to_many",
+            "from_entity": "employee",
+            "to_entity": "store"
+        },
+        {
+            "relationship_name": "Has",
+            "type": "one_to_many",
+            "from_entity": "inventory",
+            "to_entity": "product"
+        },
+        {
+            "relationship_name": "Located in",
+            "type": "one_to_many",
+            "from_entity": "inventory",
+            "to_entity": "store"
+        },
+        {
+            "relationship_name": "Belongs to",
+            "type": "one_to_many",
+            "from_entity": "product",
+            "to_entity": "category"
+        },
+        {
+            "relationship_name": "suppliered_by",
+            "type": "many_to_many",
+            "between": [
+                "product",
+                "supplier"
+            ]
+        }
+    ]
 }
