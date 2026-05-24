@@ -754,3 +754,175 @@ and that the combined database remained consistent and functional.
 Overall, the SQL integration process allowed us to successfully combine two different 
 database systems into one integrated database while preserving important information from
 both systems and maintaining database consistency.
+
+# Views and Queries
+
+During this stage, we created two meaningful database views, one from the perspective of our original system and one from the perspective of the received system.
+
+The first view, `v_CustomerOrders`, represents the original system perspective. It combines customer data with order data in order to show customer purchases, payment methods, order dates, and total order amounts.
+
+```sql
+CREATE OR REPLACE VIEW v_CustomerOrders AS
+SELECT 
+    c.customerID,
+    c.CustomerName,
+    o.orderID,
+    o.orderDate,
+    o.PaymentMethod,
+    o.totalAmount
+FROM Customer c
+JOIN Orders o
+ON c.customerID = o.customerID;
+
+To verify the view, we selected 10 rows from it:
+
+SELECT *
+FROM v_CustomerOrders
+LIMIT 10;
+
+Output:
+
+ customerid | customername | orderid | orderdate  | paymentmethod | totalamount 
+------------+--------------+---------+------------+---------------+-------------
+          1 | Customer1    |       1 | 2025-01-01 | Credit Card   |      318.00
+          2 | Customer2    |       2 | 2025-01-02 | Cash          |      116.00
+          3 | Customer3    |       3 | 2025-01-03 | Bit           |      260.00
+          4 | Customer4    |       4 | 2025-01-04 | PayPal        |      419.00
+          5 | Customer5    |       5 | 2025-01-05 | Credit Card   |      257.00
+          6 | Customer6    |       6 | 2025-01-06 | Cash          |      203.00
+          7 | Customer7    |       7 | 2025-01-07 | Bit           |      302.00
+          8 | Customer8    |       8 | 2025-01-08 | PayPal        |      129.00
+          9 | Customer9    |       9 | 2025-01-09 | Credit Card   |      320.00
+         10 | Customer10   |      10 | 2025-01-10 | Cash          |      209.00
+
+For this view, we created two queries. The first query displays orders paid by credit card:
+
+SELECT 
+    CustomerName,
+    orderID,
+    totalAmount
+FROM v_CustomerOrders
+WHERE PaymentMethod = 'Credit Card'
+LIMIT 10;
+
+Output:
+
+ customername | orderid | totalamount 
+--------------+---------+-------------
+ Customer1    |       1 |      318.00
+ Customer5    |       5 |      257.00
+ Customer9    |       9 |      320.00
+ Customer13   |      13 |      158.00
+ Customer17   |      17 |      395.00
+ Customer21   |      21 |      496.00
+ Customer25   |      25 |      134.00
+ Customer29   |      29 |      233.00
+ Customer33   |      33 |      273.00
+ Customer37   |      37 |      491.00
+
+The second query calculates the total amount spent by each customer:
+
+SELECT 
+    CustomerName,
+    SUM(totalAmount) AS TotalSpent
+FROM v_CustomerOrders
+GROUP BY CustomerName
+ORDER BY TotalSpent DESC
+LIMIT 10;
+
+Output:
+
+ customername | totalspent 
+--------------+------------
+ Customer330  |   13054.00
+ Customer410  |   12922.00
+ Customer175  |   12594.00
+ Customer332  |   12530.00
+ Customer420  |   12514.00
+ Customer51   |   12502.00
+ Customer455  |   12317.00
+ Customer435  |   12301.00
+ Customer439  |   12276.00
+ Customer180  |   12266.00
+
+The second view, v_StoreInventory, represents the received branch management system perspective. It combines store, inventory, and product data in order to monitor product quantities and stock levels in each store.
+
+CREATE OR REPLACE VIEW v_StoreInventory AS
+SELECT 
+    s.storeID,
+    s.StoreName,
+    p.productID,
+    p.ProductName,
+    i.Quantity,
+    i.MinimumStock
+FROM Store s
+JOIN Inventory i
+ON s.storeID = i.storeID
+JOIN Product p
+ON i.productID = p.productID;
+
+To verify the view, we selected 10 rows from it:
+
+SELECT *
+FROM v_StoreInventory
+LIMIT 10;
+
+Output:
+
+ storeid |            storename             | productid | productname | quantity | minimumstock 
+---------+----------------------------------+-----------+-------------+----------+--------------
+       1 | Rami Levy Jerusalem Branch 1     |         1 | Product1    |        2 |           10
+       2 | Rami Levy Tel Aviv Branch 2      |         2 | Product2    |        4 |           10
+       3 | Rami Levy Haifa Branch 3         |         3 | Product3    |        6 |           10
+       4 | Rami Levy Rishon LeZion Branch 4 |         4 | Product4    |        8 |           10
+       5 | Rami Levy Petah Tikva Branch 5   |         5 | Product5    |       10 |           10
+       6 | Rami Levy Ashdod Branch 6        |         6 | Product6    |       12 |           10
+       7 | Rami Levy Netanya Branch 7       |         7 | Product7    |       14 |           10
+       8 | Rami Levy Beersheba Branch 8     |         8 | Product8    |       16 |           10
+       9 | Rami Levy Holon Branch 9         |         9 | Product9    |       18 |           10
+      10 | Rami Levy Rehovot Branch 10      |        10 | Product10   |       20 |           10
+
+For this view, we created two queries. The first query identifies products that need restocking:
+
+SELECT 
+    StoreName,
+    ProductName,
+    Quantity,
+    MinimumStock
+FROM v_StoreInventory
+WHERE Quantity <= MinimumStock
+LIMIT 10;
+
+Output:
+
+            storename             | productname | quantity | minimumstock 
+----------------------------------+-------------+----------+--------------
+ Rami Levy Jerusalem Branch 1     | Product1    |        2 |           10
+ Rami Levy Tel Aviv Branch 2      | Product2    |        4 |           10
+ Rami Levy Haifa Branch 3         | Product3    |        6 |           10
+ Rami Levy Rishon LeZion Branch 4 | Product4    |        8 |           10
+ Rami Levy Petah Tikva Branch 5   | Product5    |       10 |           10
+
+The second query calculates the total inventory quantity in each store:
+
+SELECT 
+    StoreName,
+    SUM(Quantity) AS TotalItemsInStore
+FROM v_StoreInventory
+GROUP BY StoreName
+LIMIT 10;
+
+Output:
+
+           storename            | totalitemsinstore 
+--------------------------------+-------------------
+ Rami Levy Tel Aviv Branch 462  |               924
+ Rami Levy Netanya Branch 247   |               494
+ Rami Levy Rehovot Branch 440   |               880
+ Rami Levy Beersheba Branch 338 |               676
+ Rami Levy Beersheba Branch 348 |               696
+ Rami Levy Netanya Branch 277   |               554
+ Rami Levy Holon Branch 409     |               818
+ Rami Levy Holon Branch 389     |               778
+ Rami Levy Ashdod Branch 76     |               152
+ Rami Levy Rehovot Branch 240   |               480
