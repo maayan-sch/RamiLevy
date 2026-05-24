@@ -14,11 +14,11 @@ relationships = []
 # =====================================
 
 relationship_names = {
-    ("product", "category"): "Belongs to",
-    ("employee", "store"): "Works in",
-    ("store", "location"): "Positioned in",
-    ("inventory", "product"): "Has",
-    ("inventory", "store"): "Located in"
+    ("productB", "category"): "Belongs to",
+    ("employee", "storeB"): "Works in",
+    ("storeB", "location"): "Positioned in",
+    ("inventoryB", "productB"): "Has",
+    ("inventoryB", "storeB"): "Located in"
 }
 
 # =====================================

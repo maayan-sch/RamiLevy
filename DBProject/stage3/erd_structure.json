@@ -81,7 +81,7 @@
             ]
         },
         {
-            "entity_name": "inventory",
+            "entity_name": "inventoryB",
             "attributes": [
                 {
                     "name": "quantity",
@@ -123,7 +123,7 @@
             ]
         },
         {
-            "entity_name": "product",
+            "entity_name": "productB",
             "attributes": [
                 {
                     "name": "productid",
@@ -155,7 +155,7 @@
             ]
         },
         {
-            "entity_name": "store",
+            "entity_name": "storeB",
             "attributes": [
                 {
                     "name": "storeid",
@@ -183,7 +183,7 @@
             ]
         },
         {
-            "entity_name": "supplier",
+            "entity_name": "supplierB",
             "attributes": [
                 {
                     "name": "supplierid",
@@ -217,39 +217,39 @@
             "type": "many_to_many",
             "between": [
                 "discount",
-                "product"
+                "productB"
             ]
         },
         {
             "relationship_name": "Works in",
             "type": "one_to_many",
             "from_entity": "employee",
-            "to_entity": "store"
+            "to_entity": "storeB"
         },
         {
             "relationship_name": "Has",
             "type": "one_to_many",
-            "from_entity": "inventory",
-            "to_entity": "product"
+            "from_entity": "inventoryB",
+            "to_entity": "productB"
         },
         {
             "relationship_name": "Located in",
             "type": "one_to_many",
-            "from_entity": "inventory",
-            "to_entity": "store"
+            "from_entity": "inventoryB",
+            "to_entity": "storeB"
         },
         {
             "relationship_name": "Belongs to",
             "type": "one_to_many",
-            "from_entity": "product",
+            "from_entity": "productB",
             "to_entity": "category"
         },
         {
             "relationship_name": "suppliered_by",
             "type": "many_to_many",
             "between": [
-                "product",
-                "supplier"
+                "productB",
+                "supplierB"
             ]
         }
     ]

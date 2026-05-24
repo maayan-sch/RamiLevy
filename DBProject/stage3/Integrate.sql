@@ -1,0 +1,232 @@
+-- =====================================================
+-- Integrate.sql
+-- =====================================================
+
+
+-- =====================================================
+-- STORE INTEGRATION
+-- =====================================================
+
+-- Add new column from Tova's system
+ALTER TABLE public.store
+ADD COLUMN IF NOT EXISTS storeemail VARCHAR(100);
+
+-- Update existing stores with Tova's data
+UPDATE public.store s
+SET
+    storeemail = sb.storeemail,
+    rating = sb.rating
+FROM public.storeb sb
+WHERE s.storeid = sb.storeid;
+
+-- Insert stores that do not exist yet
+INSERT INTO public.store
+(storeid, storename, phone, websiteurl, rating, storeemail)
+
+SELECT
+    sb.storeid,
+    sb.storename,
+    sb.phone,
+    NULL,
+    sb.rating,
+    sb.storeemail
+
+FROM public.storeb sb
+
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM public.store s
+    WHERE s.storeid = sb.storeid
+);
+
+
+-- =====================================================
+-- PRODUCT INTEGRATION
+-- =====================================================
+
+ALTER TABLE public.product
+ADD COLUMN IF NOT EXISTS brand VARCHAR(50);
+
+-- Update existing products
+UPDATE public.product p
+SET
+    brand = pb.brand
+FROM public.productb pb
+WHERE p.productid = pb.productid;
+
+-- Insert new products
+INSERT INTO public.product
+(
+    productid,
+    productname,
+    price,
+    dateofmanufacture,
+    expirationdate,
+    kashrut,
+    categoryid,
+    supplierid,
+    brand
+)
+
+SELECT
+    pb.productid,
+    pb.productname,
+    pb.price,
+    CURRENT_DATE,
+    pb.expirationdate,
+    pb.kashrut,
+    pb.categoryid,
+    1,
+    pb.brand
+
+FROM public.productb pb
+
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM public.product p
+    WHERE p.productid = pb.productid
+);
+
+
+-- =====================================================
+-- INVENTORY INTEGRATION
+-- =====================================================
+
+INSERT INTO public.inventory
+(productid, storeid, quantity, minimumstock)
+
+SELECT
+    ib.productid,
+    ib.storeid,
+    ib.quantity,
+    ib.minimumstock
+
+FROM public.inventoryb ib
+
+WHERE EXISTS (
+    SELECT 1
+    FROM public.product p
+    WHERE p.productid = ib.productid
+)
+
+AND EXISTS (
+    SELECT 1
+    FROM public.store s
+    WHERE s.storeid = ib.storeid
+)
+
+AND NOT EXISTS (
+    SELECT 1
+    FROM public.inventory i
+    WHERE i.productid = ib.productid
+);
+
+
+-- =====================================================
+-- SUPPLIER INTEGRATION
+-- =====================================================
+
+-- Update supplier data
+UPDATE public.supplier s
+SET
+    email = sb.email,
+    phone = sb.contactphone
+FROM public.supplierb sb
+WHERE s.supplierid = sb.supplierid;
+
+-- Insert new suppliers
+INSERT INTO public.supplier
+(
+    supplierid,
+    suppliername,
+    email,
+    phone,
+    city,
+    street
+)
+
+SELECT
+    sb.supplierid,
+    sb.suppliername,
+    sb.email,
+    sb.contactphone,
+    'Unknown',
+    'Unknown'
+
+FROM public.supplierb sb
+
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM public.supplier s
+    WHERE s.supplierid = sb.supplierid
+);
+
+
+-- =====================================================
+-- LOCATION TABLE
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS public.location (
+    locationid integer PRIMARY KEY,
+    city character varying(100) NOT NULL,
+    street character varying(100) NOT NULL,
+    streetnumber integer NOT NULL
+);
+
+
+-- =====================================================
+-- REMOVE UNUSED TABLE
+-- =====================================================
+
+DROP TABLE IF EXISTS public.suppliered_by CASCADE;
+
+
+-- =====================================================
+-- CATEGORY UPDATE
+-- =====================================================
+
+ALTER TABLE public.category
+ADD COLUMN IF NOT EXISTS isactive INT DEFAULT 1;
+
+
+-- =====================================================
+-- CHECK COUNTS
+-- =====================================================
+
+SELECT 'store' AS table_name, COUNT(*) AS row_count
+FROM public.store
+
+UNION ALL
+
+SELECT 'product', COUNT(*)
+FROM public.product
+
+UNION ALL
+
+SELECT 'inventory', COUNT(*)
+FROM public.inventory
+
+UNION ALL
+
+SELECT 'supplier', COUNT(*)
+FROM public.supplier
+
+UNION ALL
+
+SELECT 'category', COUNT(*)
+FROM public.category
+
+UNION ALL
+
+SELECT 'location', COUNT(*)
+FROM public.location;
+
+
+-- =====================================================
+-- CLEANUP TEMP TABLES
+-- =====================================================
+
+/*DROP TABLE IF EXISTS public.storeb CASCADE;
+DROP TABLE IF EXISTS public.productb CASCADE;
+DROP TABLE IF EXISTS public.inventoryb CASCADE;
+DROP TABLE IF EXISTS public.supplierb CASCADE;*/
