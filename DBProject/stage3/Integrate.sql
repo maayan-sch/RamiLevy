@@ -9,27 +9,24 @@
 
 -- Add new column from Tova's system
 ALTER TABLE public.store
-ADD COLUMN IF NOT EXISTS storeemail VARCHAR(100);
 
 -- Update existing stores with Tova's data
 UPDATE public.store s
 SET
-    storeemail = sb.storeemail,
     rating = sb.rating
 FROM public.storeb sb
 WHERE s.storeid = sb.storeid;
 
 -- Insert stores that do not exist yet
 INSERT INTO public.store
-(storeid, storename, phone, websiteurl, rating, storeemail)
+(storeid, storename, phone, websiteurl, rating)
 
 SELECT
     sb.storeid,
     sb.storename,
     sb.phone,
     NULL,
-    sb.rating,
-    sb.storeemail
+    sb.rating
 
 FROM public.storeb sb
 
