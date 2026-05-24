@@ -518,3 +518,239 @@ Explanation:
 
 בשלב זה יושמו שאילתות מורכבות, פעולות עדכון ומחיקה, אילוצים, טרנזקציות ואינדקסים.
 המערכת מדגימה שמירה על תקינות הנתונים ושיפור ביצועים באמצעות אופטימיזציה.
+
+
+# Stage 3 - Database Integration
+
+
+# Introduction
+
+In this stage, we performed an integration between our original database system and an additional database system received from another team.
+
+The goal of this stage was to create one combined database that preserves the important data and structure from both systems, while adapting the existing database according to the integrated ERD.
+
+The integration was performed according to Method A, as required in class.
+
+---
+
+# Reverse Engineering Process
+
+First, we received a backup file of another team's database.
+
+Using the backup file, we analyzed the database structure and identified:
+
+- Tables
+- Columns
+- Primary keys
+- Foreign keys
+- Constraints
+- Relationships between tables
+
+Based on this information, we created a DSD for the received database.
+
+After that, we performed reverse engineering in order to reconstruct the ERD of the received system from the logical schema.
+
+The reverse engineering process included:
+
+1. Reading the table definitions from the backup file.
+2. Identifying entities according to the main tables.
+3. Identifying attributes according to the table columns.
+4. Identifying primary keys.
+5. Identifying foreign keys and using them to understand relationships.
+6. Identifying many-to-many relationships through junction tables.
+7. Creating an ERD that represents the received database.
+
+---
+
+# Branch Management DSD
+
+![Branch Management DSD](DBProject/stage3/screenshots3/BranchManagementDsd.png)
+
+---
+
+# Branch Management ERD
+
+![Branch Management ERD](DBProject/stage3/screenshots3/BranchManagementErd.png)
+
+---
+
+# Original and Received Systems
+
+At this point, we had two separate ERD diagrams:
+
+1. The original ERD of our system.
+2. The ERD created from the received database backup.
+
+Both systems described supermarket chain management, but there were differences in table names, attributes, and some entities.
+
+For example, some tables represented similar entities, such as:
+
+- `store` and `storeB`
+- `product` and `productB`
+- `inventory` and `inventoryB`
+- `supplier` and `supplierB`
+
+There were also tables that existed only in the received system, such as:
+
+- `discount`
+- `employee`
+- `applies_to`
+- `location`
+
+---
+
+# Combined ERD
+
+After analyzing both systems, we created a combined ERD using ERDPlus.
+
+During the integration process, we made design decisions regarding which entities should be merged, which attributes should be added, and which tables should remain as separate entities.
+
+Main integration decisions:
+
+- Similar tables were merged into one unified table.
+- Attributes that appeared only in the received database were added to the existing tables when relevant.
+- New entities that did not exist in our original system were added to the integrated schema.
+- Temporary tables with the suffix `B` were used as source tables for the integration process.
+- Unnecessary tables that were not included in the final integrated ERD were removed.
+
+![Combined ERD](DBProject/stage3/screenshots3/combineErd.png)
+
+---
+
+# Integrated DSD
+
+After completing the integration process, we generated the final integrated DSD.
+
+The integrated DSD represents the final logical structure of the combined database after all modifications and integrations were completed.
+
+![Combined DSD](DBProject/stage3/screenshots3/combineDsd.png)
+
+---
+
+# Integrated Schema Creation
+
+According to the instructions, we did not recreate the entire database from the beginning.
+
+Instead, we used the existing database and changed it using SQL commands.
+
+The integration was performed using the file:
+
+Integrate.sql
+
+## SQL Commands Used During Integration
+
+During the integration process, we used several important SQL commands in 
+order to modify the existing database structure without recreating the database from the beginning.
+
+The main commands used in the integration process were:
+
+### ALTER TABLE
+
+Used to modify existing tables by:
+
+* Adding new columns
+* Removing unnecessary columns
+* Updating the table structure according to the integrated ERD
+
+Examples:
+
+ALTER TABLE public.product
+ADD COLUMN IF NOT EXISTS brand VARCHAR(50);
+
+ALTER TABLE public.store
+DROP COLUMN IF EXISTS storeemail;
+
+This command was very important during the integration process because 
+it allowed us to adapt the existing database structure to the new combined ERD without deleting and rebuilding the tables from the beginning.
+
+---
+
+### UPDATE
+
+Used to update existing records with information received from the second system.
+
+This allowed us to merge data from matching entities while preserving the existing rows.
+
+Example:
+
+UPDATE public.product p
+SET brand = pb.brand
+FROM public.productb pb
+WHERE p.productid = pb.productid;
+
+Using UPDATE commands helped us combine information from both systems
+while avoiding duplication of existing records.
+
+---
+
+### INSERT INTO ... SELECT
+
+Used to insert rows from the received database into the integrated database.
+
+This command helped us move data between temporary integration tables and the final tables.
+
+Example:
+
+INSERT INTO public.inventory
+(productid, storeid, quantity, minimumstock)
+
+SELECT
+ib.productid,
+ib.storeid,
+ib.quantity,
+ib.minimumstock
+
+FROM public.inventoryb ib;
+
+This method allowed us to efficiently transfer large amounts of data from the temporary 
+integration tables into the final integrated tables.
+
+---
+
+### CREATE TABLE IF NOT EXISTS
+
+Used to create new tables that existed only in the received system and
+were added to the integrated ERD.
+
+Example:
+
+CREATE TABLE IF NOT EXISTS public.location (
+locationid integer PRIMARY KEY,
+city character varying(100) NOT NULL,
+street character varying(100) NOT NULL,
+streetnumber integer NOT NULL
+);
+
+This command ensured that new entities from the second system could be integrated 
+safely without causing errors if the table already existed.
+
+---
+
+### DROP TABLE IF EXISTS
+
+Used to remove temporary tables that were only needed during the integration process.
+
+Example:
+
+DROP TABLE IF EXISTS public.suppliered_by CASCADE;
+
+This helped clean the database after the integration process and remove tables 
+that were not part of the final integrated ERD.
+
+---
+
+### Data Validation Queries
+
+We also used validation queries in order to verify that all important tables 
+contain data after the integration process.
+
+Example:
+
+SELECT COUNT(*) FROM public.product;
+
+These checks helped ensure that the integration process was completed successfully 
+and that the combined database remained consistent and functional.
+
+Overall, the SQL integration process allowed us to successfully combine two different 
+database systems into one integrated database while preserving important information from
+both systems and maintaining database consistency.
