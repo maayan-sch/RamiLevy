@@ -170,6 +170,23 @@ CREATE TABLE IF NOT EXISTS public.location (
     streetnumber integer NOT NULL
 );
 
+INSERT INTO public.location
+(locationid, city, street, streetnumber)
+
+SELECT
+    lb.locationid,
+    lb.city,
+    lb.street,
+    lb.streetnumber
+
+FROM public.locationb lb
+
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM public.location l
+    WHERE l.locationid = lb.locationid
+);
+
 
 -- =====================================================
 -- REMOVE UNUSED TABLE
@@ -186,44 +203,5 @@ ALTER TABLE public.category
 ADD COLUMN IF NOT EXISTS isactive INT DEFAULT 1;
 
 
--- =====================================================
--- CHECK COUNTS
--- =====================================================
-
-SELECT 'store' AS table_name, COUNT(*) AS row_count
-FROM public.store
-
-UNION ALL
-
-SELECT 'product', COUNT(*)
-FROM public.product
-
-UNION ALL
-
-SELECT 'inventory', COUNT(*)
-FROM public.inventory
-
-UNION ALL
-
-SELECT 'supplier', COUNT(*)
-FROM public.supplier
-
-UNION ALL
-
-SELECT 'category', COUNT(*)
-FROM public.category
-
-UNION ALL
-
-SELECT 'location', COUNT(*)
-FROM public.location;
 
 
--- =====================================================
--- CLEANUP TEMP TABLES
--- =====================================================
-
-/*DROP TABLE IF EXISTS public.storeb CASCADE;
-DROP TABLE IF EXISTS public.productb CASCADE;
-DROP TABLE IF EXISTS public.inventoryb CASCADE;
-DROP TABLE IF EXISTS public.supplierb CASCADE;*/
