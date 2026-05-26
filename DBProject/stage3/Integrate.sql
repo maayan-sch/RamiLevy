@@ -13,7 +13,7 @@ ALTER TABLE public.store
 -- Update existing stores with Tova's data
 UPDATE public.store s
 SET
-    rating = sb.rating
+    phone = sb.phone
 FROM public.storeb sb
 WHERE s.storeid = sb.storeid;
 
@@ -203,5 +203,5 @@ ALTER TABLE public.category
 ADD COLUMN IF NOT EXISTS isactive INT DEFAULT 1;
 
 
-
+  
 

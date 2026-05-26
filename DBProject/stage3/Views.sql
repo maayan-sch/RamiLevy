@@ -92,3 +92,25 @@ SELECT
 FROM v_StoreInventory
 GROUP BY StoreName
 LIMIT 10;
+
+
+
+CREATE OR REPLACE VIEW vHagana_StoreInventory AS
+SELECT 
+    s.storeID,
+    s.StoreName,
+    p.productID,
+    p.ProductName,
+    i.Quantity,
+    i.MinimumStock
+FROM Store s
+JOIN Inventory i
+ON s.storeID = i.storeID
+JOIN Product p
+ON i.productID = p.productID;
+
+
+-- Show 10 rows from the view
+SELECT *
+FROM v_StoreInventory
+LIMIT 10;
