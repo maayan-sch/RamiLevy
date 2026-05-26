@@ -2,10 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\DBProject",
+    "\\DBProject\\stage2",
     "\\DBProject\\stage2\\screenshots2",
     "\\DBProject\\stage3",
     "\\init-db"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\DBProject\\stage2\\Queries.sql",
   "PreviewInSolutionExplorer": false
 }

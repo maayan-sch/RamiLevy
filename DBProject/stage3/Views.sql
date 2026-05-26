@@ -95,22 +95,16 @@ LIMIT 10;
 
 
 
-CREATE OR REPLACE VIEW vHagana_StoreInventory AS
+/*CREATE OR REPLACE VIEW vhagana AS
 SELECT 
-    s.storeID,
-    s.StoreName,
-    p.productID,
-    p.ProductName,
-    i.Quantity,
-    i.MinimumStock
-FROM Store s
-JOIN Inventory i
-ON s.storeID = i.storeID
-JOIN Product p
-ON i.productID = p.productID;
+    s.storeid,
+    s.storename
+FROM store s
+JOIN employee e
+    ON s.storeid = e.storeid
+JOIN location l
+    ON s.locationid = l.locationid;
 
-
--- Show 10 rows from the view
 SELECT *
-FROM v_StoreInventory
-LIMIT 10;
+FROM vhagana
+LIMIT 10;*/
