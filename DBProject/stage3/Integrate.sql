@@ -7,9 +7,6 @@
 -- STORE INTEGRATION
 -- =====================================================
 
--- Add new column from Tova's system
-ALTER TABLE public.store
-
 -- Update existing stores with Tova's data
 UPDATE public.store s
 SET
