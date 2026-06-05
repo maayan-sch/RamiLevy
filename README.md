@@ -926,6 +926,9 @@ Output:
  Rami Levy Holon Branch 389     |               778
  Rami Levy Ashdod Branch 76     |               152
  Rami Levy Rehovot Branch 240   |               480
+
+ ```
+
 # Stage 4 – PL/pgSQL Programming
 
 ---
@@ -1047,7 +1050,7 @@ This main program executes:
 
 ![Main2](DBProject/stage4/pic4/main2Pic.png)
 
----
+
 
 ## Stage 4 Summary
 
