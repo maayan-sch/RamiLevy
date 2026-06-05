@@ -926,3 +926,135 @@ Output:
  Rami Levy Holon Branch 389     |               778
  Rami Levy Ashdod Branch 76     |               152
  Rami Levy Rehovot Branch 240   |               480
+
+ # Stage 4 – PL/pgSQL Programming
+
+## Introduction
+
+In this stage, we implemented advanced PL/pgSQL programs on the integrated Rami Levy database.
+
+The objective of this stage was to demonstrate procedural programming capabilities inside PostgreSQL using functions, procedures, triggers, loops, records, cursors, exception handling, and automatic database updates.
+
+---
+
+## Functions
+
+### Function 1 – get_low_stock_products
+
+This function returns a REF CURSOR containing products whose inventory quantity is lower than the minimum stock level.
+
+Programming elements used:
+
+* REF CURSOR
+* JOIN
+* Exception Handling
+* RETURN CURSOR
+
+![Function1](DBProject/stage4/pic4/func1.png)
+
+---
+
+### Function 2 – calculate_order_total
+
+This function calculates the total value of an order by iterating through all order items and summing their subtotal values.
+
+Programming elements used:
+
+* FOR LOOP
+* RECORD
+* Variables
+* RETURN value
+* Exception Handling
+
+![Function2](DBProject/stage4/pic4/func2.png)
+
+---
+
+## Procedures
+
+### Procedure 1 – restock_inventory
+
+This procedure scans the inventory table and automatically updates products whose quantity is below the minimum stock level.
+
+Programming elements used:
+
+* FOR LOOP
+* RECORD
+* UPDATE statement
+* Variables
+* Exception Handling
+
+![Procedure1](DBProject/stage4/pic4/Proc1.png)
+
+---
+
+### Procedure 2 – update_expired_product_discount
+
+This procedure applies a 20% discount to products that are close to their expiration date.
+
+Programming elements used:
+
+* FOR LOOP
+* RECORD
+* UPDATE statement
+* Variables
+* Exception Handling
+
+![Procedure2](DBProject/stage4/pic4/proc2.png)
+
+---
+
+## Triggers
+
+### Trigger 1 – Inventory Audit Trigger
+
+This trigger is activated whenever the quantity of a product in the inventory table is updated. The trigger records the previous quantity and the new quantity in an audit table.
+
+![Trigger1](DBProject/stage4/pic4/triger1.png)
+
+---
+
+### Trigger 2 – Order Status Audit Trigger
+
+This trigger is activated whenever an order status is modified. The trigger stores the previous status and the new status in a log table.
+
+![Trigger2](DBProject/stage4/pic4/trigger2.png)
+
+---
+
+## Main Programs
+
+### Main Program 1
+
+This main program executes:
+
+* restock_inventory()
+* get_low_stock_products()
+
+![Main1](DBProject/stage4/pic4/main1Pic.png)
+
+---
+
+### Main Program 2
+
+This main program executes:
+
+* update_expired_product_discount()
+* calculate_order_total()
+
+![Main2](DBProject/stage4/pic4/main2Pic.png)
+
+---
+
+## Stage 4 Summary
+
+In this stage, we successfully implemented procedural database programming using PL/pgSQL.
+
+The implementation included:
+
+* 2 Functions
+* 2 Procedures
+* 2 Triggers
+* 2 Main Programs
+
+The programs demonstrate the use of loops, records, cursors, exception handling, automatic updates, inventory management, discount calculation, auditing mechanisms, and order processing.

@@ -2,11 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\DBProject",
-    "\\DBProject\\stage2",
-    "\\DBProject\\stage2\\screenshots2",
-    "\\DBProject\\stage3",
+    "\\DBProject\\stage4",
     "\\init-db"
   ],
-  "SelectedNode": "\\DBProject\\stage2\\Queries.sql",
+  "SelectedNode": "\\DBProject\\stage4\\Procedure_RestockInventory.sql",
   "PreviewInSolutionExplorer": false
 }
