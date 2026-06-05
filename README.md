@@ -926,8 +926,9 @@ Output:
  Rami Levy Holon Branch 389     |               778
  Rami Levy Ashdod Branch 76     |               152
  Rami Levy Rehovot Branch 240   |               480
+# Stage 4 – PL/pgSQL Programming
 
- # Stage 4 – PL/pgSQL Programming
+---
 
 ## Introduction
 
@@ -943,12 +944,12 @@ The objective of this stage was to demonstrate procedural programming capabiliti
 
 This function returns a REF CURSOR containing products whose inventory quantity is lower than the minimum stock level.
 
-Programming elements used:
+**Programming elements used:**
 
-* REF CURSOR
-* JOIN
-* Exception Handling
-* RETURN CURSOR
+- REF CURSOR
+- JOIN
+- Exception Handling
+- RETURN CURSOR
 
 ![Function1](DBProject/stage4/pic4/func1.png)
 
@@ -958,13 +959,13 @@ Programming elements used:
 
 This function calculates the total value of an order by iterating through all order items and summing their subtotal values.
 
-Programming elements used:
+**Programming elements used:**
 
-* FOR LOOP
-* RECORD
-* Variables
-* RETURN value
-* Exception Handling
+- FOR LOOP
+- RECORD
+- Variables
+- RETURN value
+- Exception Handling
 
 ![Function2](DBProject/stage4/pic4/func2.png)
 
@@ -976,13 +977,13 @@ Programming elements used:
 
 This procedure scans the inventory table and automatically updates products whose quantity is below the minimum stock level.
 
-Programming elements used:
+**Programming elements used:**
 
-* FOR LOOP
-* RECORD
-* UPDATE statement
-* Variables
-* Exception Handling
+- FOR LOOP
+- RECORD
+- UPDATE statement
+- Variables
+- Exception Handling
 
 ![Procedure1](DBProject/stage4/pic4/Proc1.png)
 
@@ -992,13 +993,13 @@ Programming elements used:
 
 This procedure applies a 20% discount to products that are close to their expiration date.
 
-Programming elements used:
+**Programming elements used:**
 
-* FOR LOOP
-* RECORD
-* UPDATE statement
-* Variables
-* Exception Handling
+- FOR LOOP
+- RECORD
+- UPDATE statement
+- Variables
+- Exception Handling
 
 ![Procedure2](DBProject/stage4/pic4/proc2.png)
 
@@ -1008,7 +1009,8 @@ Programming elements used:
 
 ### Trigger 1 – Inventory Audit Trigger
 
-This trigger is activated whenever the quantity of a product in the inventory table is updated. The trigger records the previous quantity and the new quantity in an audit table.
+This trigger is activated whenever the quantity of a product in the inventory table is updated.  
+The trigger records the previous quantity and the new quantity in an audit table.
 
 ![Trigger1](DBProject/stage4/pic4/triger1.png)
 
@@ -1016,7 +1018,8 @@ This trigger is activated whenever the quantity of a product in the inventory ta
 
 ### Trigger 2 – Order Status Audit Trigger
 
-This trigger is activated whenever an order status is modified. The trigger stores the previous status and the new status in a log table.
+This trigger is activated whenever an order status is modified.  
+The trigger stores the previous status and the new status in a log table.
 
 ![Trigger2](DBProject/stage4/pic4/trigger2.png)
 
@@ -1028,8 +1031,8 @@ This trigger is activated whenever an order status is modified. The trigger stor
 
 This main program executes:
 
-* restock_inventory()
-* get_low_stock_products()
+- restock_inventory()
+- get_low_stock_products()
 
 ![Main1](DBProject/stage4/pic4/main1Pic.png)
 
@@ -1039,8 +1042,8 @@ This main program executes:
 
 This main program executes:
 
-* update_expired_product_discount()
-* calculate_order_total()
+- update_expired_product_discount()
+- calculate_order_total()
 
 ![Main2](DBProject/stage4/pic4/main2Pic.png)
 
@@ -1052,9 +1055,9 @@ In this stage, we successfully implemented procedural database programming using
 
 The implementation included:
 
-* 2 Functions
-* 2 Procedures
-* 2 Triggers
-* 2 Main Programs
+- 2 Functions
+- 2 Procedures
+- 2 Triggers
+- 2 Main Programs
 
 The programs demonstrate the use of loops, records, cursors, exception handling, automatic updates, inventory management, discount calculation, auditing mechanisms, and order processing.
