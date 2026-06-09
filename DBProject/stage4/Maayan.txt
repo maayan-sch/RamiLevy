@@ -1,0 +1,39 @@
+CREATE OR REPLACE PROCEDURE low_stock_products()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    FOR rec IN
+        SELECT
+            p.productid,
+            p.productname,
+            i.quantity,
+            i.minimumstock,
+            SUM(oi.quantity) AS total_orders
+        FROM product p
+        JOIN inventory i
+            ON p.productid = i.productid
+        JOIN orderitem oi
+            ON p.productid = oi.productid
+        WHERE i.quantity < i.minimumstock
+        GROUP BY
+            p.productid,
+            p.productname,
+            i.quantity,
+            i.minimumstock
+    LOOP
+        RAISE NOTICE
+            'Product ID: %, Product Name: %, Current Quantity: %, Minimum Stock: %, Total Ordered: %',
+            rec.productid,
+            rec.productname,
+            rec.quantity,
+            rec.minimumstock,
+            rec.total_orders;
+    END LOOP;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error in low_stock_products procedure: %', SQLERRM;
+END;
+$$;

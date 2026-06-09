@@ -1,0 +1,87 @@
+CREATE OR REPLACE PROCEDURE add_expiration_discounts()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    product_record RECORD;
+    new_discount_id INT;
+BEGIN
+
+    FOR product_record IN
+        SELECT
+            productid,
+            productname,
+            expirationdate
+        FROM product
+        WHERE expirationdate <= CURRENT_DATE
+    LOOP
+
+        SELECT COALESCE(MAX(discountid), 0) + 1
+        INTO new_discount_id
+        FROM discount;
+
+        INSERT INTO discount
+        (
+            discountid,
+            discountname,
+            discountpercentage,
+            startdate,
+            enddate
+        )
+        VALUES
+        (
+            new_discount_id,
+            'Expiration Discount - ' || product_record.productname,
+            20,
+            product_record.expirationdate,
+            product_record.expirationdate + INTERVAL '30 days'
+        );
+
+        INSERT INTO applies_to
+        (
+            productid,
+            discountid
+        )
+        VALUES
+        (
+            product_record.productid,
+            new_discount_id
+        );
+
+        RAISE NOTICE
+        'Discount % created for product %',
+        new_discount_id,
+        product_record.productname;
+
+    END LOOP;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE
+        'Error creating expiration discounts: %',
+        SQLERRM;
+END;
+$$;
+
+CALL add_expiration_discounts();
+
+SELECT *
+FROM discount
+ORDER BY discountid DESC
+LIMIT 20;
+
+
+
+SELECT
+    p.productid,
+    p.productname,
+    p.expirationdate,
+    d.discountid,
+    d.discountname,
+    d.discountpercentage
+FROM product p
+JOIN applies_to a
+    ON p.productid = a.productid
+JOIN discount d
+    ON a.discountid = d.discountid
+WHERE d.discountname LIKE 'Expiration Discount%'
+ORDER BY d.discountid DESC;
