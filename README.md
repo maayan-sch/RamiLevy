@@ -1064,3 +1064,4 @@ The implementation included:
 - 2 Main Programs
 
 The programs demonstrate the use of loops, records, cursors, exception handling, automatic updates, inventory management, discount calculation, auditing mechanisms, and order processing.
+
