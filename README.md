@@ -1065,3 +1065,267 @@ The implementation included:
 
 The programs demonstrate the use of loops, records, cursors, exception handling, automatic updates, inventory management, discount calculation, auditing mechanisms, and order processing.
 
+# Stage 5 – Graphical User Interface
+
+---
+
+## Introduction
+
+In this stage, we developed a graphical user interface for the integrated Rami Levy Online database system.
+
+The application was implemented in Python using Tkinter and connects directly to the PostgreSQL database through psycopg2.
+
+The purpose of this stage was to provide a user-friendly environment for working with the database, allowing users to perform CRUD operations, execute SQL queries, and run PL/pgSQL programs without writing SQL commands manually.
+
+---
+
+## Tools and Technologies
+
+- Python
+- Tkinter
+- PostgreSQL
+- psycopg2
+- pgAdmin 4
+- Visual Studio
+
+---
+
+## Database Tables Access
+
+The application provides access to all tables in the integrated Rami Levy database:
+
+- Product
+- Category
+- Supplier
+- Customer
+- Orders
+- OrderItem
+- Inventory
+- Store
+- Employee
+- Discount
+- Applies_To
+- Location
+- Region
+- Inventory_Audit_Log
+- Order_Status_Log
+
+Each table can be viewed through a dedicated screen in the application.
+
+---
+
+## Main Screen
+
+The main screen serves as the system's entry point.
+
+It allows users to navigate to all database tables, execute queries, run functions and procedures, and perform product management operations.
+
+![Main Screen](DBProject/stage5/screenshots/mainScreen.png)
+
+---
+
+## Products Screen
+
+The Products screen displays product information stored in the database.
+
+Instead of displaying foreign key IDs, JOIN operations are used to present meaningful information such as category names and supplier names.
+
+Displayed information includes:
+
+- Product Name
+- Price
+- Category
+- Supplier
+- Brand
+
+![Products Screen](DBProject/stage5/screenshots/product.png)
+
+---
+
+## CRUD Operations
+
+### Add Product
+
+The Add Product screen allows users to insert new products into the database.
+
+The user enters product details including product name, price, brand, kashrut information, manufacture date, and expiration date.
+
+![Add Product](DBProject/stage5/screenshots/addProduct.png)
+
+---
+
+### Update Product
+
+The Update Product screen allows users to update an existing product.
+
+According to the project requirements, the user first loads the product information and then updates the relevant fields.
+
+The product is identified using Product Name and Brand.
+
+![Update Product](DBProject/stage5/screenshots/updateProduct.png)
+
+---
+
+### Delete Product
+
+The Delete Product screen allows users to remove products from the database.
+
+The deletion process is performed using Product Name and Brand to avoid ambiguity between products with similar names.
+
+![Delete Product](DBProject/stage5/screenshots/deleteProduct.png)
+
+---
+
+## Queries and Programs Screen
+
+This screen provides access to SQL queries from Stage 2 and PL/pgSQL programs from Stage 4.
+
+The user can execute queries, functions, and procedures directly from the graphical interface.
+
+![Queries and Programs](DBProject/stage5/screenshots/queriesAndPrograms.png)
+
+---
+
+## Queries From Stage 2
+
+The application allows execution of SQL queries developed in Stage 2.
+
+### Query 1 – Customers With Orders Above 200
+
+Displays customers whose orders exceed a total amount of 200.
+
+### Query 2 – Products Above 50
+
+Displays products with a price greater than 50 together with supplier information and expiration details.
+
+![Query Execution](DBProject/stage5/screenshots/query1.png)
+
+---
+
+## Functions From Stage 4
+
+### Function 1 – calculate_order_total
+
+Calculates the total value of a specific order by summing all order item subtotals.
+
+### Function 2 – get_low_stock_products
+
+Returns products whose inventory quantity is below the minimum stock level.
+
+The functions can be executed directly from the graphical interface.
+
+![Function](DBProject/stage5/screenshots/function.png)
+
+---
+
+## Procedures From Stage 4
+
+### Procedure 1 – restock_inventory
+
+Updates inventory quantities for products whose stock level is below the required minimum stock.
+
+### Procedure 2 – update_expired_product_discount
+
+Applies discounts to products that are approaching their expiration date.
+
+The procedures can be executed directly from the graphical interface.
+
+![Procedure Run](DBProject/stage5/screenshots/procedureRun.png)
+
+---
+
+## Trigger Log Screens
+
+### Inventory Audit Log
+
+This screen displays inventory changes that were automatically recorded by the inventory trigger.
+
+Information displayed includes:
+
+- Product ID
+- Old Quantity
+- New Quantity
+- Change Date
+
+![Inventory Audit Log](DBProject/stage5/screenshots/inventoryLog.png)
+
+---
+
+### Order Status Log
+
+This screen displays order status changes that were automatically recorded by the order status trigger.
+
+Information displayed includes:
+
+- Order ID
+- Old Status
+- New Status
+- Change Date
+
+![Order Status Log](DBProject/stage5/screenshots/orderLog.png)
+
+---
+
+## Additional Database Screens
+
+The application includes dedicated screens for viewing data from all database tables, including:
+
+- Customers
+- Suppliers
+- Inventory
+- Stores
+- Categories
+- Discounts
+- Employees
+- Locations
+- Regions
+- Order Items
+- Product Discounts
+- Inventory Audit Log
+- Order Status Log
+
+These screens provide convenient access to the database while displaying user-friendly information instead of foreign key identifiers whenever possible.
+
+---
+
+## How to Run the Application
+
+### Prerequisites
+
+- PostgreSQL server running
+- Rami Levy database restored and available
+- Python installed
+- Required Python packages installed
+
+### Install Dependencies
+
+```bash
+py -m pip install -r requirements.txt
+```
+
+### Run the Application
+
+```bash
+py app.py
+```
+
+---
+
+## Project Files
+
+The Stage 5 folder contains:
+
+- app.py – graphical user interface source code
+- db_config.py – database connection configuration
+- requirements.txt – required Python packages
+- screenshots/ – screenshots of the application
+
+---
+
+## Summary
+
+In this stage, we developed a complete graphical interface for the integrated Rami Levy Online database.
+
+The application supports viewing all database tables, performing CRUD operations on products, executing SQL queries from Stage 2, running functions and procedures from Stage 4, and displaying trigger-generated logs.
+
+The interface improves usability by presenting meaningful information instead of foreign key IDs and provides a centralized environment for managing the database.
