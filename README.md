@@ -1288,6 +1288,28 @@ These screens provide convenient access to the database while displaying user-fr
 
 ---
 
+## Admin CRUD Screen
+
+The system includes a dedicated **Admin CRUD** screen that allows administrators to manage all database tables.
+
+The administrator can:
+
+- Select any table in the database
+- View table contents
+- Insert new rows
+- Update existing rows
+- Delete rows
+
+The screen automatically detects the table structure and generates the appropriate input fields dynamically, allowing CRUD operations without writing SQL commands manually.
+
+This functionality provides complete management capabilities while keeping the regular user interface simple and user-friendly.
+
+![Admin CRUD](DBProject/stage5/screenshots/admin.png)
+
+---
+
+---
+
 ## How to Run the Application
 
 ### Prerequisites

@@ -4,6 +4,7 @@ from tkinter import ttk
 
 from db_config import get_connection
 from PIL import Image, ImageTk
+from psycopg2 import sql
 
 
 # ==================================================
@@ -52,7 +53,6 @@ def open_products():
             JOIN supplier s
                 ON p.supplierid = s.supplierid
             ORDER BY p.productid
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -215,7 +215,6 @@ def load_products(tree):
         JOIN supplier s
             ON p.supplierid = s.supplierid
         ORDER BY p.productid DESC
-        LIMIT 100
     """)
 
     rows = cursor.fetchall()
@@ -827,7 +826,6 @@ def open_orders():
             JOIN customer c
                 ON o.customerid = c.customerid
             ORDER BY o.orderdate DESC
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -1042,7 +1040,6 @@ def open_order_items():
             JOIN orders o
                 ON oi.orderid = o.orderid
             ORDER BY o.orderid DESC
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -1081,7 +1078,6 @@ def open_applies_to():
             JOIN discount d
                 ON a.discountid = d.discountid
             ORDER BY p.productname
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -1111,7 +1107,6 @@ def open_inventory_audit_log():
                 changedate
             FROM inventory_audit_log
             ORDER BY logid DESC
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -1146,7 +1141,6 @@ def open_order_status_log():
                 changedate
             FROM order_status_log
             ORDER BY logid DESC
-            LIMIT 100
         """)
 
         rows = cursor.fetchall()
@@ -1165,6 +1159,476 @@ def open_order_status_log():
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
+
+
+
+
+def get_table_columns(table_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = %s
+        ORDER BY ordinal_position
+    """, (table_name,))
+
+    columns = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return columns
+
+
+def get_primary_keys(table_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT kcu.column_name
+        FROM information_schema.table_constraints tc
+        JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_name = kcu.constraint_name
+           AND tc.table_schema = kcu.table_schema
+        WHERE tc.constraint_type = 'PRIMARY KEY'
+          AND tc.table_schema = 'public'
+          AND tc.table_name = %s
+        ORDER BY kcu.ordinal_position
+    """, (table_name,))
+
+    keys = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return keys
+
+def get_table_columns(table_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = %s
+        ORDER BY ordinal_position
+    """, (table_name,))
+
+    columns = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return columns
+
+
+def get_primary_keys(table_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT kcu.column_name
+        FROM information_schema.table_constraints tc
+        JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_name = kcu.constraint_name
+           AND tc.table_schema = kcu.table_schema
+        WHERE tc.constraint_type = 'PRIMARY KEY'
+          AND tc.table_schema = 'public'
+          AND tc.table_name = %s
+        ORDER BY kcu.ordinal_position
+    """, (table_name,))
+
+    keys = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return keys
+
+
+def open_admin_crud():
+
+    admin_window = tk.Toplevel(root)
+    admin_window.title("Admin CRUD")
+    admin_window.geometry("600x450")
+
+    tables = [
+        "applies_to",
+        "category",
+        "customer",
+        "discount",
+        "employee",
+        "inventory",
+        "inventory_audit_log",
+        "location",
+        "order_status_log",
+        "orderitem",
+        "orders",
+        "product",
+        "region",
+        "store",
+        "supplier"
+    ]
+
+    tk.Label(
+        admin_window,
+        text="Admin CRUD - All Tables",
+        font=("Arial", 16, "bold")
+    ).pack(pady=15)
+
+    tk.Label(admin_window, text="Select Table").pack()
+
+    table_combo = ttk.Combobox(
+        admin_window,
+        values=tables,
+        state="readonly",
+        width=35
+    )
+    table_combo.pack(pady=10)
+
+    def selected_table():
+        table = table_combo.get()
+
+        if not table:
+            messagebox.showerror("Error", "Please select a table")
+            return None
+
+        return table
+
+    def view_table():
+        table = selected_table()
+
+        if table is None:
+            return
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            query = sql.SQL("SELECT * FROM {} ").format(
+                sql.Identifier(table)
+            )
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            columns = [desc[0] for desc in cursor.description]
+
+            conn.close()
+
+            show_results(
+                f"View Table - {table}",
+                columns,
+                rows
+            )
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+    def add_row():
+        table = selected_table()
+
+        if table is None:
+            return
+
+        columns = get_table_columns(table)
+        primary_keys = get_primary_keys(table)
+
+        add_window = tk.Toplevel(root)
+        add_window.title(f"Add Row - {table}")
+        add_window.geometry("500x600")
+
+        entries = {}
+
+        for col in columns:
+            if len(primary_keys) == 1 and col == primary_keys[0]:
+                continue
+
+            tk.Label(add_window, text=col).pack()
+            entry = tk.Entry(add_window, width=40)
+            entry.pack(pady=3)
+            entries[col] = entry
+
+        def save_row():
+
+            try:
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                insert_columns = list(entries.keys())
+                values = []
+
+                for col in insert_columns:
+                    value = entries[col].get()
+
+                    if value == "":
+                        value = None
+
+                    values.append(value)
+
+                if len(primary_keys) == 1:
+                    pk = primary_keys[0]
+
+                    cursor.execute(
+                        sql.SQL("SELECT COALESCE(MAX({}), 0) + 1 FROM {}").format(
+                            sql.Identifier(pk),
+                            sql.Identifier(table)
+                        )
+                    )
+
+                    new_id = cursor.fetchone()[0]
+
+                    insert_columns = [pk] + insert_columns
+                    values = [new_id] + values
+
+                query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+                    sql.Identifier(table),
+                    sql.SQL(", ").join(map(sql.Identifier, insert_columns)),
+                    sql.SQL(", ").join(sql.Placeholder() * len(insert_columns))
+                )
+
+                cursor.execute(query, values)
+
+                conn.commit()
+                conn.close()
+
+                messagebox.showinfo("Success", "Row added successfully")
+                add_window.destroy()
+
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+        tk.Button(
+            add_window,
+            text="Save Row",
+            command=save_row
+        ).pack(pady=20)
+
+    def update_row():
+        table = selected_table()
+
+        if table is None:
+            return
+
+        columns = get_table_columns(table)
+        primary_keys = get_primary_keys(table)
+
+        update_window = tk.Toplevel(root)
+        update_window.title(f"Update Row - {table}")
+        update_window.geometry("500x650")
+
+        pk_entries = {}
+        data_entries = {}
+
+        tk.Label(
+            update_window,
+            text="Primary Key Values",
+            font=("Arial", 12, "bold")
+        ).pack(pady=10)
+
+        for pk in primary_keys:
+            tk.Label(update_window, text=pk).pack()
+            entry = tk.Entry(update_window, width=40)
+            entry.pack(pady=3)
+            pk_entries[pk] = entry
+
+        tk.Label(
+            update_window,
+            text="Row Data",
+            font=("Arial", 12, "bold")
+        ).pack(pady=10)
+
+        for col in columns:
+            if col in primary_keys:
+                continue
+
+            tk.Label(update_window, text=col).pack()
+            entry = tk.Entry(update_window, width=40)
+            entry.pack(pady=3)
+            data_entries[col] = entry
+
+        def load_row():
+
+            try:
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                where_clause = sql.SQL(" AND ").join(
+                    sql.SQL("{} = %s").format(sql.Identifier(pk))
+                    for pk in primary_keys
+                )
+
+                query = sql.SQL("SELECT * FROM {} WHERE {}").format(
+                    sql.Identifier(table),
+                    where_clause
+                )
+
+                pk_values = [
+                    pk_entries[pk].get()
+                    for pk in primary_keys
+                ]
+
+                cursor.execute(query, pk_values)
+
+                row = cursor.fetchone()
+                conn.close()
+
+                if not row:
+                    messagebox.showerror("Error", "Row not found")
+                    return
+
+                row_dict = dict(zip(columns, row))
+
+                for col, entry in data_entries.items():
+                    entry.delete(0, tk.END)
+
+                    if row_dict[col] is not None:
+                        entry.insert(0, row_dict[col])
+
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+        def save_update():
+
+            try:
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                set_clause = sql.SQL(", ").join(
+                    sql.SQL("{} = %s").format(sql.Identifier(col))
+                    for col in data_entries.keys()
+                )
+
+                where_clause = sql.SQL(" AND ").join(
+                    sql.SQL("{} = %s").format(sql.Identifier(pk))
+                    for pk in primary_keys
+                )
+
+                query = sql.SQL("UPDATE {} SET {} WHERE {}").format(
+                    sql.Identifier(table),
+                    set_clause,
+                    where_clause
+                )
+
+                values = []
+
+                for col in data_entries.keys():
+                    value = data_entries[col].get()
+
+                    if value == "":
+                        value = None
+
+                    values.append(value)
+
+                for pk in primary_keys:
+                    values.append(pk_entries[pk].get())
+
+                cursor.execute(query, values)
+
+                conn.commit()
+                conn.close()
+
+                messagebox.showinfo("Success", "Row updated successfully")
+                update_window.destroy()
+
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+        tk.Button(
+            update_window,
+            text="Load Row",
+            command=load_row
+        ).pack(pady=10)
+
+        tk.Button(
+            update_window,
+            text="Update Row",
+            command=save_update
+        ).pack(pady=10)
+
+    def delete_row():
+        table = selected_table()
+
+        if table is None:
+            return
+
+        primary_keys = get_primary_keys(table)
+
+        delete_window = tk.Toplevel(root)
+        delete_window.title(f"Delete Row - {table}")
+        delete_window.geometry("400x300")
+
+        pk_entries = {}
+
+        tk.Label(
+            delete_window,
+            text="Enter Primary Key Values",
+            font=("Arial", 12, "bold")
+        ).pack(pady=10)
+
+        for pk in primary_keys:
+            tk.Label(delete_window, text=pk).pack()
+            entry = tk.Entry(delete_window, width=35)
+            entry.pack(pady=3)
+            pk_entries[pk] = entry
+
+        def confirm_delete():
+
+            try:
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                where_clause = sql.SQL(" AND ").join(
+                    sql.SQL("{} = %s").format(sql.Identifier(pk))
+                    for pk in primary_keys
+                )
+
+                query = sql.SQL("DELETE FROM {} WHERE {}").format(
+                    sql.Identifier(table),
+                    where_clause
+                )
+
+                values = [
+                    pk_entries[pk].get()
+                    for pk in primary_keys
+                ]
+
+                cursor.execute(query, values)
+
+                conn.commit()
+                conn.close()
+
+                messagebox.showinfo("Success", "Row deleted successfully")
+                delete_window.destroy()
+
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+        tk.Button(
+            delete_window,
+            text="Delete Row",
+            command=confirm_delete
+        ).pack(pady=20)
+
+    tk.Button(
+        admin_window,
+        text="View Selected Table",
+        width=30,
+        command=view_table
+    ).pack(pady=8)
+
+    tk.Button(
+        admin_window,
+        text="Add Row",
+        width=30,
+        command=add_row
+    ).pack(pady=8)
+
+    tk.Button(
+        admin_window,
+        text="Update Row",
+        width=30,
+        command=update_row
+    ).pack(pady=8)
+
+    tk.Button(
+        admin_window,
+        text="Delete Row",
+        width=30,
+        command=delete_row
+    ).pack(pady=8)
 
 def open_queries():
 
@@ -1294,6 +1758,8 @@ add_main_button("Order Items", open_order_items)
 add_main_button("Product Discounts", open_applies_to)
 add_main_button("Stores", open_stores)
 add_main_button("Queries & Programs", open_queries)
+add_main_button("Admin CRUD", open_admin_crud)
 add_main_button("Exit", root.destroy)
+
 
 root.mainloop()
