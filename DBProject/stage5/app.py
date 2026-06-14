@@ -46,7 +46,10 @@ def open_products():
                 p.price,
                 c.categoryname,
                 s.suppliername,
-                p.brand
+                p.brand,
+                p.dateofmanufacture,
+                p.expirationdate,
+                p.kashrut
             FROM product p
             JOIN category c
                 ON p.categoryid = c.categoryid
@@ -108,7 +111,11 @@ def open_products():
                 "Price",
                 "Category",
                 "Supplier",
-                "Brand"
+                "Brand",
+                "Dateofmanufacture",
+                "Expirationdate",
+                "Kashrut"
+
             ),
             show="headings"
         )
@@ -136,6 +143,20 @@ def open_products():
         tree.heading(
             "Brand",
             text="Brand"
+        )
+        tree.heading(
+        "Dateofmanufacture",
+        text="Manufacture Date"
+        )
+
+        tree.heading(
+            "Expirationdate",
+            text="Expiration Date"
+        )
+
+        tree.heading(
+            "Kashrut",
+            text="Kashrut"
         )
 
         tree.column(
@@ -173,7 +194,10 @@ def open_products():
                     row[2],
                     row[3],
                     row[4],
-                    row[5]
+                    row[5],
+                    row[6],
+                    row[7],
+                    row[8]
                 )
             )
 
@@ -208,7 +232,10 @@ def load_products(tree):
             p.price,
             c.categoryname,
             s.suppliername,
-            p.brand
+            p.brand,
+            p.dateofmanufacture,
+            p.expirationdate,
+            p.kashrut
         FROM product p
         JOIN category c
             ON p.categoryid = c.categoryid
@@ -231,7 +258,10 @@ def load_products(tree):
                 row[2],
                 row[3],
                 row[4],
-                row[5]
+                row[5],
+                row[6],
+                row[7],
+                row[8]
             )
         )
 
@@ -480,8 +510,10 @@ def open_delete_product():
 def show_results(title, columns, rows):
 
     result_window = tk.Toplevel(root)
+
     result_window.title(title)
-    result_window.geometry("900x500")
+
+    result_window.geometry("1000x600")
 
     tk.Label(
         result_window,
@@ -489,21 +521,60 @@ def show_results(title, columns, rows):
         font=("Arial", 16, "bold")
     ).pack(pady=10)
 
+    frame = tk.Frame(result_window)
+
+    frame.pack(
+        fill="both",
+        expand=True
+    )
+
     tree = ttk.Treeview(
-        result_window,
+        frame,
         columns=columns,
         show="headings"
     )
 
+    scrollbar_y = ttk.Scrollbar(
+        frame,
+        orient="vertical",
+        command=tree.yview
+    )
+
+    tree.configure(
+        yscrollcommand=scrollbar_y.set
+    )
+
     for col in columns:
-        tree.heading(col, text=col)
-        tree.column(col, width=150)
+
+        tree.heading(
+            col,
+            text=col
+        )
+
+        tree.column(
+            col,
+            width=170,
+            anchor="center"
+        )
 
     for row in rows:
-        tree.insert("", tk.END, values=row)
 
-    tree.pack(fill="both", expand=True, padx=10, pady=10)
+        tree.insert(
+            "",
+            tk.END,
+            values=row
+        )
 
+    tree.pack(
+        side="left",
+        fill="both",
+        expand=True
+    )
+
+    scrollbar_y.pack(
+        side="right",
+        fill="y"
+    )
 
 def run_total_sales_by_category():
 
@@ -793,7 +864,9 @@ def open_customers():
             SELECT
                 customername,
                 email,
-                phone
+                phone,   
+                city,
+                street
             FROM customer
             ORDER BY customername
         """)
@@ -803,7 +876,7 @@ def open_customers():
 
         show_results(
             "Customers",
-            ("Customer Name", "Email", "Phone"),
+            ("Customer Name", "Email", "Phone","City","Street"),
             rows
         )
 
@@ -821,7 +894,8 @@ def open_orders():
                 c.customername,
                 o.orderdate,
                 o.totalamount,
-                o.orderstatus
+                o.orderstatus,
+                o.paymentmethod
             FROM orders o
             JOIN customer c
                 ON o.customerid = c.customerid
@@ -833,7 +907,7 @@ def open_orders():
 
         show_results(
             "Orders",
-            ("Customer", "Order Date", "Total Amount", "Status"),
+            ("Customer", "Order Date", "Total Amount", "Status","Paymentmethod"),
             rows
         )
 
@@ -1028,18 +1102,21 @@ def open_order_items():
 
         cursor.execute("""
             SELECT
-                o.orderid,
+                c.customername,
+                o.orderdate,
                 p.productname,
                 oi.quantity,
                 oi.subtotal,
                 oi.inonsale,
                 oi.saledescription
             FROM orderitem oi
-            JOIN product p
-                ON oi.productid = p.productid
             JOIN orders o
                 ON oi.orderid = o.orderid
-            ORDER BY o.orderid DESC
+            JOIN customer c
+                ON o.customerid = c.customerid
+            JOIN product p
+                ON oi.productid = p.productid
+            ORDER BY o.orderdate DESC
         """)
 
         rows = cursor.fetchall()
@@ -1048,7 +1125,8 @@ def open_order_items():
         show_results(
             "Order Items",
             (
-                "Order",
+                "Customer",
+                "Order Date",
                 "Product",
                 "Quantity",
                 "Subtotal",
@@ -1060,7 +1138,6 @@ def open_order_items():
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
-
 
 def open_applies_to():
 
@@ -1101,12 +1178,14 @@ def open_inventory_audit_log():
 
         cursor.execute("""
             SELECT
-                productid,
-                oldquantity,
-                newquantity,
-                changedate
-            FROM inventory_audit_log
-            ORDER BY logid DESC
+                p.productname,
+                l.oldquantity,
+                l.newquantity,
+                l.changedate
+            FROM inventory_audit_log l
+            LEFT JOIN product p
+                ON l.productid = p.productid
+            ORDER BY l.changedate DESC
         """)
 
         rows = cursor.fetchall()
@@ -1115,7 +1194,7 @@ def open_inventory_audit_log():
         show_results(
             "Inventory Audit Log",
             (
-                "Product ID",
+                "Product",
                 "Old Quantity",
                 "New Quantity",
                 "Change Date"
@@ -1126,7 +1205,6 @@ def open_inventory_audit_log():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
-
 def open_order_status_log():
 
     try:
@@ -1135,12 +1213,17 @@ def open_order_status_log():
 
         cursor.execute("""
             SELECT
-                orderid,
-                oldstatus,
-                newstatus,
-                changedate
-            FROM order_status_log
-            ORDER BY logid DESC
+                c.customername,
+                o.orderdate,
+                l.oldstatus,
+                l.newstatus,
+                l.changedate
+            FROM order_status_log l
+            LEFT JOIN orders o
+                ON l.orderid = o.orderid
+            LEFT JOIN customer c
+                ON o.customerid = c.customerid
+            ORDER BY l.changedate DESC
         """)
 
         rows = cursor.fetchall()
@@ -1149,7 +1232,8 @@ def open_order_status_log():
         show_results(
             "Order Status Log",
             (
-                "Order ID",
+                "Customer",
+                "Order Date",
                 "Old Status",
                 "New Status",
                 "Change Date"
@@ -1162,7 +1246,6 @@ def open_order_status_log():
 
 
 
-
 def get_table_columns(table_name):
     conn = get_connection()
     cursor = conn.cursor()
@@ -1200,42 +1283,8 @@ def get_primary_keys(table_name):
     conn.close()
     return keys
 
-def get_table_columns(table_name):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = 'public'
-          AND table_name = %s
-        ORDER BY ordinal_position
-    """, (table_name,))
-
-    columns = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return columns
 
 
-def get_primary_keys(table_name):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT kcu.column_name
-        FROM information_schema.table_constraints tc
-        JOIN information_schema.key_column_usage kcu
-            ON tc.constraint_name = kcu.constraint_name
-           AND tc.table_schema = kcu.table_schema
-        WHERE tc.constraint_type = 'PRIMARY KEY'
-          AND tc.table_schema = 'public'
-          AND tc.table_name = %s
-        ORDER BY kcu.ordinal_position
-    """, (table_name,))
-
-    keys = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return keys
 
 
 def open_admin_crud():
@@ -1297,7 +1346,7 @@ def open_admin_crud():
             conn = get_connection()
             cursor = conn.cursor()
 
-            query = sql.SQL("SELECT * FROM {} ").format(
+            query = sql.SQL("SELECT * FROM {} ORDER BY 1").format(
                 sql.Identifier(table)
             )
 
