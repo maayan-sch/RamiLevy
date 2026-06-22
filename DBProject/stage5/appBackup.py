@@ -267,69 +267,6 @@ def load_products(tree):
 
     conn.close()
 
-
-def open_products_view():
-
-    try:
-        products_window = tk.Toplevel(root)
-        products_window.title("Products - View Only")
-        products_window.geometry("1000x600")
-
-        title = tk.Label(
-            products_window,
-            text="Products - View Only",
-            font=("Arial", 16, "bold")
-        )
-        title.pack(pady=10)
-
-        tree = ttk.Treeview(
-            products_window,
-            columns=(
-                "Product Name",
-                "Price",
-                "Category",
-                "Supplier",
-                "Brand",
-                "Dateofmanufacture",
-                "Expirationdate",
-                "Kashrut"
-            ),
-            show="headings"
-        )
-
-        tree.heading("Product Name", text="Product Name")
-        tree.heading("Price", text="Price")
-        tree.heading("Category", text="Category")
-        tree.heading("Supplier", text="Supplier")
-        tree.heading("Brand", text="Brand")
-        tree.heading("Dateofmanufacture", text="Manufacture Date")
-        tree.heading("Expirationdate", text="Expiration Date")
-        tree.heading("Kashrut", text="Kashrut")
-
-        tree.column("Product Name", width=250)
-        tree.column("Price", width=100)
-        tree.column("Category", width=200)
-        tree.column("Supplier", width=220)
-        tree.column("Brand", width=150)
-        tree.column("Dateofmanufacture", width=150)
-        tree.column("Expirationdate", width=150)
-        tree.column("Kashrut", width=120)
-
-        tree.pack(
-            fill="both",
-            expand=True,
-            padx=10,
-            pady=10
-        )
-
-        load_products(tree)
-
-    except Exception as e:
-        messagebox.showerror(
-            "Error",
-            str(e)
-        )
-
 def open_add_product():
 
     add_window = tk.Toplevel(root)
@@ -1742,30 +1679,6 @@ def open_admin_crud():
         command=delete_row
     ).pack(pady=8)
 
-def run_low_stock_products():
-
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("BEGIN;")
-        cursor.execute("SELECT get_low_stock_products();")
-        cursor.execute('FETCH ALL IN "low_stock_cursor";')
-
-        rows = cursor.fetchall()
-
-        conn.commit()
-        conn.close()
-
-        show_results(
-            "Low Stock Products",
-            ("Product ID", "Product Name", "Quantity", "Minimum Stock"),
-            rows
-        )
-
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
-        
 def open_queries():
 
     window = tk.Toplevel(root)
@@ -1799,13 +1712,6 @@ def open_queries():
         width=40,
         command=run_calculate_order_total
     ).pack(pady=5)
-    
-    tk.Button(
-        window,
-        text="Function - Low Stock Products",
-        width=40,
-        command=run_low_stock_products
-    ).pack(pady=5)
 
     tk.Button(
         window,
@@ -1820,114 +1726,6 @@ def open_queries():
         width=40,
         command=run_update_expired_discounts
     ).pack(pady=5)
-
-
-# ==================================================
-# Customer and Manager Panels
-# ==================================================
-
-def open_customer():
-
-    window = tk.Toplevel(root)
-    window.title("Customer")
-    window.geometry("450x500")
-
-    tk.Label(
-        window,
-        text="Customer Panel",
-        font=("Arial", 16, "bold")
-    ).pack(pady=20)
-
-    tk.Button(
-        window,
-        text="Products",
-        width=30,
-        command=open_products_view
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Discounts",
-        width=30,
-        command=open_discounts
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Locations",
-        width=30,
-        command=open_locations
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Regions",
-        width=30,
-        command=open_regions
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Stores",
-        width=30,
-        command=open_stores
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Inventory",
-        width=30,
-        command=open_inventory
-    ).pack(pady=5)
-
-
-def open_manager():
-
-    window = tk.Toplevel(root)
-    window.title("Manager")
-    window.geometry("500x600")
-
-    tk.Label(
-        window,
-        text="Manager Panel",
-        font=("Arial", 16, "bold")
-    ).pack(pady=20)
-
-    tk.Button(
-        window,
-        text="Database Connection Test",
-        width=35,
-        command=test_connection
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Queries & Programs",
-        width=35,
-        command=open_queries
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Inventory Audit Log",
-        width=35,
-        command=open_inventory_audit_log
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Order Status Log",
-        width=35,
-        command=open_order_status_log
-    ).pack(pady=5)
-
-    tk.Button(
-        window,
-        text="Admin CRUD",
-        width=35,
-        command=open_admin_crud
-    ).pack(pady=5)
-
 
 # ==================================================
 # Main Window
@@ -1992,19 +1790,25 @@ def add_main_button(text, command):
     ).pack(pady=5)
 
 
-add_main_button(
-    "Customer",
-    open_customer
-)
+add_main_button("Test Database Connection", test_connection)
+add_main_button("Products", open_products)
+add_main_button("Suppliers", open_suppliers)
+add_main_button("Customers", open_customers)
+add_main_button("Inventory", open_inventory)
+add_main_button("Inventory Audit Log", open_inventory_audit_log)
+add_main_button("Order Status Log", open_order_status_log)
+add_main_button("Orders", open_orders)
+add_main_button("Categories", open_categories)
+add_main_button("Discounts", open_discounts)
+add_main_button("Employees", open_employees)
+add_main_button("Locations", open_locations)
+add_main_button("Regions", open_regions)
+add_main_button("Order Items", open_order_items)
+add_main_button("Product Discounts", open_applies_to)
+add_main_button("Stores", open_stores)
+add_main_button("Queries & Programs", open_queries)
+add_main_button("Admin CRUD", open_admin_crud)
+add_main_button("Exit", root.destroy)
 
-add_main_button(
-    "Manager",
-    open_manager
-)
-
-add_main_button(
-    "Exit",
-    root.destroy
-)
 
 root.mainloop()

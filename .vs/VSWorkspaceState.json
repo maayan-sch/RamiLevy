@@ -2,9 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\DBProject",
-    "\\DBProject\\stage4",
+    "\\DBProject\\stage5",
     "\\init-db"
   ],
-  "SelectedNode": "\\DBProject\\stage4\\MainProgram_Orders.sql",
+  "SelectedNode": "\\DBProject\\stage5\\app.py",
   "PreviewInSolutionExplorer": false
 }
