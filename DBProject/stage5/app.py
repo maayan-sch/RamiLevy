@@ -683,7 +683,8 @@ def run_expiring_products_query():
                 p.expirationdate,
                 p.price
             FROM product p
-            WHERE p.expirationdate <= CURRENT_DATE + INTERVAL '30 days'
+            WHERE p.expirationdate BETWEEN CURRENT_DATE
+                                       AND CURRENT_DATE + INTERVAL '30 days'
             ORDER BY p.expirationdate
         """)
 
