@@ -1532,10 +1532,49 @@ def open_admin_crud():
         ).pack(pady=10)
 
         for pk in primary_keys:
+
             tk.Label(update_window, text=pk).pack()
-            entry = tk.Entry(update_window, width=40)
-            entry.pack(pady=3)
-            pk_entries[pk] = entry
+
+            # Product -> Combobox of all product IDs
+            if table == "product" and pk == "productid":
+
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                cursor.execute("""
+                    SELECT productid
+                    FROM product
+                    ORDER BY productid
+                """)
+
+                product_ids = [
+                    str(row[0])
+                    for row in cursor.fetchall()
+                ]
+
+                conn.close()
+
+                combo = ttk.Combobox(
+                    update_window,
+                    values=product_ids,
+                    state="readonly",
+                    width=37
+                )
+
+                combo.pack(pady=3)
+
+                pk_entries[pk] = combo
+
+            else:
+
+                entry = tk.Entry(
+                    update_window,
+                    width=40
+                )
+
+                entry.pack(pady=3)
+
+                pk_entries[pk] = entry
 
         tk.Label(
             update_window,
