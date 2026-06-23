@@ -1935,48 +1935,44 @@ def open_manager():
 
 root = tk.Tk()
 root.title("Rami Levy Online Database System")
-root.geometry("750x750")
+root.state("zoomed")
 
-canvas = tk.Canvas(root)
-scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
-scrollable_frame = tk.Frame(canvas)
-
-scrollable_frame.bind(
-    "<Configure>",
-    lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-)
-
-canvas_window = canvas.create_window((0, 0), window=scrollable_frame, anchor="n")
-def center_frame(event):
-    canvas.itemconfig(
-        canvas_window,
-        width=event.width
-    )
-
-canvas.bind("<Configure>", center_frame)
-canvas.configure(yscrollcommand=scrollbar.set)
-
-canvas.pack(side="left", fill="both", expand=True)
-scrollbar.pack(side="right", fill="y")
 
 try:
     bg_image = Image.open("screenshots/ramiPic.jpg")
-    bg_image = bg_image.resize((750, 1000))
+    bg_image = bg_image.resize(
+        (
+            root.winfo_screenwidth(),
+            root.winfo_screenheight()
+        )
+    )
+
     bg_photo = ImageTk.PhotoImage(bg_image)
 
-    bg_label = tk.Label(scrollable_frame, image=bg_photo)
+    bg_label = tk.Label(root, image=bg_photo)
+    bg_label.image = bg_photo
     bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 except Exception:
-    scrollable_frame.configure(bg="#f5f5f5")
+    root.configure(bg="#f5f5f5")
 
-content_frame = tk.Frame(scrollable_frame, bg="#ffffff", bd=2, relief="ridge")
-content_frame.pack(pady=30)
+content_frame = tk.Frame(
+    root,
+    bg="#ffffff",
+    bd=2,
+    relief="ridge"
+)
+
+content_frame.place(
+    relx=0.5,
+    rely=0.35,
+    anchor="center"
+)
 
 title = tk.Label(
     content_frame,
-    text="Rami Levy Online\nDatabase Management System",
-    font=("Arial", 20, "bold"),
+    text="Rami Levy Online",
+    font=("Arial", 30, "bold"),
     bg="#ffffff"
 )
 title.pack(pady=20)
@@ -1986,8 +1982,9 @@ def add_main_button(text, command):
     tk.Button(
         content_frame,
         text=text,
-        width=35,
-        height=2,
+        width=45,
+        height=3,
+        font=("Arial", 14, "bold"),
         command=command
     ).pack(pady=5)
 
